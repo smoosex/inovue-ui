@@ -57,7 +57,7 @@ const componentsRoutes: RouteRecordRaw[] = [
             path: "advanced-toolbar",
             name: "AdvancedToolbar",
             meta: { title: "menu.components.navigation.advancedToolbar" },
-            component: () => import("@/views/SkeletonView.vue"),
+            component: () => import("@/views/AdvancedToolbarView.vue"),
           },
         ],
       },

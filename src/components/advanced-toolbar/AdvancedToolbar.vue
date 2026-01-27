@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ToolbarAction } from "./types";
-import ToolbarItem from "./components/ToolbarItem.vue";
+import ToolbarItem from "./ToolbarItem.vue";
 
 defineProps<{
   primaryActions?: ToolbarAction[];

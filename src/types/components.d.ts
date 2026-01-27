@@ -219,7 +219,7 @@ declare module 'vue' {
     TimelineItem: typeof import('./../components/timeline/TimelineItem.vue')['default']
     TimelineTime: typeof import('./../components/timeline/TimelineTime.vue')['default']
     TimelineTitle: typeof import('./../components/timeline/TimelineTitle.vue')['default']
-    ToolbarItem: typeof import('./../components/advanced-toolbar/components/ToolbarItem.vue')['default']
+    ToolbarItem: typeof import('./../components/advanced-toolbar/ToolbarItem.vue')['default']
     Tooltip: typeof import('./../components/ui/tooltip/Tooltip.vue')['default']
     TooltipContent: typeof import('./../components/ui/tooltip/TooltipContent.vue')['default']
     TooltipProvider: typeof import('./../components/ui/tooltip/TooltipProvider.vue')['default']

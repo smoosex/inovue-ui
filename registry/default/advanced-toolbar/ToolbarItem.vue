@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import type { ToolbarAction } from "../types";
+import type { ToolbarAction } from "./types";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 defineProps<{
   action: ToolbarAction;
