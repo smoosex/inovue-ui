@@ -10,3 +10,5 @@ export type Column = {
   enableAutoTooltip?: boolean;
   ellipsis?: boolean;
 };
+
+export type { Locale } from "./locales";

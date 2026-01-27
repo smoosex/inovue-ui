@@ -1,8 +1,9 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { computed, ref, watch, nextTick, onMounted } from "vue";
-import ColumnToggle from "./components/ColumnToggle.vue";
-import TablePagination from "./components/TablePagination.vue";
-import type { Column } from "./types";
+import ColumnToggle from "./ColumnToggle.vue";
+import TablePagination from "./TablePagination.vue";
+import type { Column, Locale } from "./types";
+import { getI18nText } from "./locales";
 import { useResizeObserver } from "@vueuse/core";
 import {
   Tooltip,
@@ -14,16 +15,23 @@ type Props = {
   data: T[];
   total: number;
   showCheckbox?: boolean;
+  showColumnToggle?: boolean;
   loading?: boolean;
   rowKey?: string;
+  locale?: Locale;
   onReset?: () => void;
 };
 
 const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true,
+  showColumnToggle: true,
   loading: false,
   rowKey: "id",
+  locale: "zhHans",
 });
+
+const $t = (key: Parameters<typeof getI18nText>[0]) =>
+  getI18nText(key, props.locale);
 
 const selectedIds = defineModel<string[]>("selectedIds", { default: [] });
 const columns = defineModel<Column[]>("columns", { required: true });
@@ -166,7 +174,7 @@ const getCellClass = (col: Column) => {
               <Checkbox
                 id="select-all"
                 :model-value="allSelected"
-                @update:model-value="(v: boolean) => toggleAll(v)"
+                @update:model-value="(v) => toggleAll(v as boolean)"
               />
             </TableHead>
             <TableHead
@@ -187,6 +195,7 @@ const getCellClass = (col: Column) => {
               {{ col.label }}
             </TableHead>
             <TableHead
+              v-if="showColumnToggle"
               class="w-12.5 text-right sticky right-0 z-20 transition-shadow duration-300"
               :class="{
                 'bg-muted': isScrollable,
@@ -194,7 +203,11 @@ const getCellClass = (col: Column) => {
                   !firstRightFixedColumn && isScrollable,
               }"
             >
-              <ColumnToggle v-model="columns" :on-reset="props.onReset" />
+              <ColumnToggle
+                v-model="columns"
+                :on-reset="props.onReset"
+                :locale="props.locale"
+              />
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -206,7 +219,7 @@ const getCellClass = (col: Column) => {
                   :id="'select-' + row[rowKey]"
                   :model-value="selectedIds.includes(row[rowKey])"
                   @update:model-value="
-                    (val: boolean) => toggleOne(row[rowKey], val)
+                    (val) => toggleOne(row[rowKey], val as boolean)
                   "
                 />
               </TableCell>
@@ -271,6 +284,7 @@ const getCellClass = (col: Column) => {
                 </slot>
               </TableCell>
               <TableCell
+                v-if="showColumnToggle"
                 class="sticky right-0 z-20 transition-shadow duration-300"
                 :class="{
                   'bg-background': isScrollable,
@@ -283,10 +297,14 @@ const getCellClass = (col: Column) => {
           <template v-else>
             <TableRow>
               <TableCell
-                :colspan="visibleColumns.length + (showCheckbox ? 2 : 1)"
+                :colspan="
+                  visibleColumns.length +
+                  (showCheckbox ? 1 : 0) +
+                  (showColumnToggle ? 1 : 0)
+                "
                 class="h-24 text-center"
               >
-                No results.
+                {{ $t("noResults") }}
               </TableCell>
             </TableRow>
           </template>
@@ -299,6 +317,7 @@ const getCellClass = (col: Column) => {
       v-model:pageNum="pageNum"
       v-model:page-size="pageSize"
       :total="total"
+      :locale="props.locale"
     />
   </div>
 </template>

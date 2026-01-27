@@ -16,6 +16,10 @@
           "type": "registry:component"
         },
         {
+          "path": "registry/default/advanced-table/locales.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/default/advanced-table/types.ts",
           "type": "registry:component"
         },
