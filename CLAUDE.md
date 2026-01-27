@@ -10,6 +10,16 @@ Never change `src/lib/utils.ts` and `src/components/ui/**/*` unless the user req
 
 Always use Kebab-case for Event Names.
 
+## Rule Files
+
+Additional rules are defined in `.claude/rules/`. Always read and follow these:
+
+- `.claude/rules/feature-architecture.md` - Feature-based code organization
+- `.claude/rules/api-documentation.md` - API documentation guidelines
+- `.claude/rules/auto-imports.md` - Auto-import usage guidelines
+- `.claude/rules/i18n-usage.md` - Internationalization guidelines
+- `.claude/rules/icon-usage.md` - Icon usage guidelines
+
 ## Commands
 
 ```bash
