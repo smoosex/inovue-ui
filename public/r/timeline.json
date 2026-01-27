@@ -1,0 +1,41 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "timeline",
+  "type": "registry:component",
+  "title": "Timeline",
+  "description": "A timeline component for displaying chronological events with customizable alignment.",
+  "dependencies": [],
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "registry/default/timeline/Timeline.vue",
+      "content": "<script setup lang=\"ts\">\nimport { provide, type InjectionKey } from \"vue\";\n\nexport interface TimelineContext {\n  align: \"left\" | \"right\";\n}\n\nconst props = withDefaults(\n  defineProps<{\n    align?: \"left\" | \"right\";\n  }>(),\n  {\n    align: \"left\",\n  }\n);\n\nconst timelineContext: TimelineContext = {\n  align: props.align,\n};\n\nprovide(\"timeline\" as InjectionKey<TimelineContext> | string, timelineContext);\n</script>\n\n<template>\n  <ul class=\"space-y-6 border-l-2 border-muted ml-3 pl-6\">\n    <slot />\n  </ul>\n</template>\n",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/default/timeline/TimelineItem.vue",
+      "content": "<script setup lang=\"ts\">\n</script>\n\n<template>\n  <li class=\"relative flex gap-4\">\n    <slot />\n  </li>\n</template>\n",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/default/timeline/TimelineDot.vue",
+      "content": "<script setup lang=\"ts\">\nimport type { HTMLAttributes } from \"vue\";\nimport { cn } from \"@/lib/utils\";\n\nconst props = withDefaults(\n  defineProps<{\n    class?: HTMLAttributes[\"class\"];\n    variant?: \"default\" | \"primary\" | \"success\" | \"warning\" | \"danger\";\n  }>(),\n  {\n    variant: \"default\",\n  }\n);\n\nconst variantStyles: Record<string, string> = {\n  default: \"bg-border\",\n  primary: \"bg-primary\",\n  success: \"bg-emerald-500\",\n  warning: \"bg-amber-500\",\n  danger: \"bg-rose-500\",\n};\n</script>\n\n<template>\n  <div\n    :class=\"\n      cn(\n        'absolute -left-[31px] mt-1.5 h-3 w-3 rounded-full border-2 border-background',\n        variantStyles[variant],\n        props.class\n      )\n    \"\n  />\n</template>\n",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/default/timeline/TimelineContent.vue",
+      "content": "<script setup lang=\"ts\">\nimport type { HTMLAttributes } from \"vue\";\nimport { cn } from \"@/lib/utils\";\n\nconst props = defineProps<{\n  class?: HTMLAttributes[\"class\"];\n}>();\n</script>\n\n<template>\n  <div :class=\"cn('flex-1 space-y-0.5', props.class)\">\n    <slot />\n  </div>\n</template>\n",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/default/timeline/TimelineTitle.vue",
+      "content": "<script setup lang=\"ts\">\nimport type { HTMLAttributes } from \"vue\";\nimport { cn } from \"@/lib/utils\";\n\nconst props = defineProps<{\n  class?: HTMLAttributes[\"class\"];\n}>();\n</script>\n\n<template>\n  <h3 :class=\"cn('text-sm font-medium leading-none', props.class)\">\n    <slot />\n  </h3>\n</template>\n",
+      "type": "registry:component"
+    },
+    {
+      "path": "registry/default/timeline/TimelineTime.vue",
+      "content": "<script setup lang=\"ts\">\nimport type { HTMLAttributes } from \"vue\";\nimport { cn } from \"@/lib/utils\";\n\nconst props = defineProps<{\n  class?: HTMLAttributes[\"class\"];\n}>();\n</script>\n\n<template>\n  <p :class=\"cn('text-xs text-muted-foreground', props.class)\">\n    <slot />\n  </p>\n</template>\n",
+      "type": "registry:component"
+    }
+  ]
+}
