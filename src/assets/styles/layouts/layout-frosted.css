@@ -1,0 +1,128 @@
+/* Sidebar */
+.layout-frosted [data-sidebar="sidebar"] {
+  border-radius: var(--radius);
+  background: oklch(from var(--sidebar) l c h / 0.4);
+  backdrop-filter: blur(var(--blur-sm));
+  border: 1px solid oklch(from var(--color-white) l c h / 0.2);
+  shadow: var(--shadow-sm);
+}
+
+/* Card - 卡片 */
+.layout-frosted [data-slot="card"] {
+  background: oklch(from var(--card) l c h / 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Dialog Overlay - 遮罩层 */
+.layout-frosted [data-slot="dialog-overlay"] {
+  background-color: oklch(from var(--background) l c h / 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Dialog Content - 对话框内容 */
+.layout-frosted [data-slot="dialog-content"] {
+  background: oklch(from var(--background) l c h / 0.3);
+  backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 1rem;
+}
+
+/* Command - 命令面板 */
+.layout-frosted [data-slot="command"] {
+  background: transparent;
+}
+
+/* Command Item - 高亮项 */
+.layout-frosted [data-slot="command-item"][data-highlighted] {
+  border-radius: 1rem;
+  background: oklch(from var(--accent) l c h / 0.5);
+}
+
+/* Range Calendar Cell - 选中范围内的单元格 */
+.layout-frosted [data-slot="range-calendar-cell"]:has([data-selected]) {
+  background: oklch(from var(--accent) l c h / 0.5);
+  backdrop-filter: blur(8px);
+}
+
+/* Table Header - 表头 */
+.layout-frosted [data-slot="table-header"] {
+  background: oklch(from var(--muted) l c h / 0.8);
+}
+
+/* Table Fixed Columns - 固定列（滚动时） */
+.layout-frosted table th.bg-muted.sticky,
+.layout-frosted table th.bg-muted[style*="sticky"],
+.layout-frosted [data-slot="table-head"].bg-muted.sticky,
+.layout-frosted [data-slot="table-head"].bg-muted[style*="sticky"] {
+  background-color: oklch(from var(--muted) l c h / 0.6) !important;
+  backdrop-filter: blur(8px);
+}
+
+.layout-frosted table td.bg-background.sticky,
+.layout-frosted table td.bg-background[style*="sticky"],
+.layout-frosted [data-slot="table-cell"].bg-background.sticky,
+.layout-frosted [data-slot="table-cell"].bg-background[style*="sticky"] {
+  background-color: oklch(from var(--background) l c h / 0.6) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Tabs List - 标签页列表 */
+.layout-frosted [data-slot="tabs-list"] {
+  background: oklch(from var(--muted) l c h / 0.5);
+}
+
+/* Sheet Overlay - 遮罩层 */
+.layout-frosted [data-slot="sheet-overlay"] {
+  background-color: oklch(from var(--background) l c h / 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Sheet Content - 侧边栏内容 */
+.layout-frosted [data-slot="sheet-content"] {
+  background: oklch(from var(--popover) l c h / 0.3);
+  backdrop-filter: blur(12px);
+  border: none;
+}
+
+/* Sheet Header/Footer - 头部/底部 */
+.layout-frosted [data-slot="sheet-header"],
+.layout-frosted [data-slot="sheet-footer"] {
+  background: oklch(from var(--background) l c h / 0.4);
+  backdrop-filter: blur(8px);
+}
+
+/* Popover Content - 弹出框内容 */
+.layout-frosted [data-slot="popover-content"] {
+  background: oklch(from var(--popover) l c h / 0.5);
+  backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 1rem;
+}
+
+/* Dropdown Menu Content - 下拉菜单内容 */
+.layout-frosted [data-slot="dropdown-menu-content"] {
+  background: oklch(from var(--popover) l c h / 0.1);
+  backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 1rem;
+}
+
+/* Toast - vue-sonner */
+.layout-frosted [data-sonner-toast] {
+  background: oklch(from var(--popover) l c h / 0.3);
+  backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 1rem;
+}
+
+.layout-frosted [data-sonner-toast][data-type="success"] {
+  background: oklch(from var(--popover) l c h / 0.3);
+}
+
+/* Select Content - 下拉选择内容 */
+.layout-frosted [data-slot="select-content"] {
+  background: oklch(from var(--popover) l c h / 0.5);
+  backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 1rem;
+}

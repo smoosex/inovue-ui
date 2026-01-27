@@ -1,0 +1,4 @@
+export const ERROR_CODE = {
+  SUCCESS: "000000",
+  UNAUTHORIZED: "100001",
+};
