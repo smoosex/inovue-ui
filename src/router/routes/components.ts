@@ -17,7 +17,7 @@ const componentsRoutes: RouteRecordRaw[] = [
             path: "advanced-table",
             name: "AdvancedTable",
             meta: { title: "menu.components.dataDisplay.advancedTable" },
-            component: () => import("@/views/SkeletonView.vue"),
+            component: () => import("@/views/AdvancedTableView.vue"),
           },
           {
             path: "timeline",
