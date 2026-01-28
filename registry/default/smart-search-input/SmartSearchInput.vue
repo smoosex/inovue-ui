@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { Search } from "lucide-vue-next";
-import type { FilterOption, FilterValue, FilterInputType, AnyFilterValue } from "./types";
+import { Search, X } from "lucide-vue-next";
+import type {
+  FilterOption,
+  FilterValue,
+  FilterInputType,
+  AnyFilterValue,
+  ActiveFilterItem,
+  ActiveFilterRemoveEvent,
+} from "./types";
 import { getI18nText, type Locale } from "./locales";
 import FilterInput from "./FilterInput.vue";
 import FilterSelect from "./FilterSelect.vue";
@@ -15,10 +22,14 @@ const props = defineProps<{
   locale?: Locale;
 }>();
 
+const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters");
+
 const emit = defineEmits<{
   (e: "search", value: FilterValue): void;
   (e: "loadMore", filterKey: string): void;
   (e: "loadChildren", parentId: string): void;
+  (e: "removeFilter", value: ActiveFilterRemoveEvent): void;
+  (e: "clearAllFilters"): void;
 }>();
 
 const locale = computed(() => props.locale || "en");
@@ -103,11 +114,23 @@ const handleSearch = () => {
     value: formattedValue,
   });
 };
+
+const removeFilter = (key: string, item: ActiveFilterItem) => {
+  activeFilters.value = activeFilters.value?.filter((f) => f.key !== key) || [];
+  emit("removeFilter", { key, item });
+};
+
+const clearAllFilters = () => {
+  activeFilters.value = [];
+  emit("clearAllFilters");
+};
 </script>
 
 <template>
-  <div class="flex items-center">
-    <Select v-model="selectedKey">
+  <div class="flex flex-col gap-2">
+    <!-- Search Input -->
+    <div class="flex items-center">
+      <Select v-model="selectedKey">
       <SelectTrigger class="w-50 rounded-r-none border-r-0 focus:ring-0">
         <SelectValue :placeholder="$t('selectColumn')" />
       </SelectTrigger>
@@ -151,5 +174,29 @@ const handleSearch = () => {
     >
       <Search class="h-4 w-4" />
     </Button>
+    </div>
+
+    <!-- Active Filters -->
+    <div v-if="activeFilters?.length" class="flex flex-wrap gap-2 items-center">
+      <div
+        v-for="item in activeFilters"
+        :key="item.key"
+        class="flex items-center gap-1 px-2 py-1 text-sm bg-muted rounded-md"
+      >
+        <span class="truncate max-w-40">{{ item.label }}: {{ item.displayValue }}</span>
+        <button
+          class="hover:bg-muted-foreground/20 rounded p-0.5"
+          @click="removeFilter(item.key, item)"
+        >
+          <X class="h-3 w-3" />
+        </button>
+      </div>
+      <button
+        class="text-xs text-muted-foreground hover:text-foreground"
+        @click="clearAllFilters"
+      >
+        清除全部
+      </button>
+    </div>
   </div>
 </template>

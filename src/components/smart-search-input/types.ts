@@ -59,3 +59,15 @@ export type FilterValue<T = AnyFilterValue> = {
   key: string;
   value: T;
 };
+
+export type ActiveFilterItem = {
+  key: string;
+  label: string;
+  value: string | number | (string | number)[] | DateTimeRange | CascadeValue;
+  displayValue: string;
+};
+
+export type ActiveFilterRemoveEvent = {
+  key: string;
+  item: ActiveFilterItem;
+};

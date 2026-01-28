@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { format } from "date-fns";
 import { SmartSearchInput } from "@/components/smart-search-input";
-import type { FilterOption, FilterValue, AnyFilterValue } from "@/components/smart-search-input";
+import type {
+  FilterOption,
+  FilterValue,
+  AnyFilterValue,
+  ActiveFilterItem,
+} from "@/components/smart-search-input";
 import { Button } from "@/components/ui/button";
 
 const { locale } = useI18n();
@@ -11,6 +17,7 @@ const tableLocale = computed(() => {
 });
 
 const searchValue = ref<AnyFilterValue>();
+const activeFilters = ref<ActiveFilterItem[]>([]);
 
 const filterOptions: FilterOption[] = [
   {
@@ -46,8 +53,59 @@ const filterOptions: FilterOption[] = [
   },
 ];
 
-const handleSearch = ({ _key, value }: FilterValue) => {
-  searchValue.value = value;
+const handleSearch = (filterValue: FilterValue) => {
+  searchValue.value = filterValue.value;
+  const option = filterOptions.find((o) => o.value === filterValue.key);
+  if (option) {
+    let displayValue: string;
+    const value = filterValue.value as any;
+
+    if (value && typeof value === "object") {
+      // 日期范围
+      if ("from" in value && "to" in value) {
+        const from = value.from ? new Date(value.from) : null;
+        const to = value.to ? new Date(value.to) : null;
+        if (from && to) {
+          displayValue = `${format(from, "yyyy-MM-dd")} ~ ${format(to, "yyyy-MM-dd")}`;
+        } else if (from) {
+          displayValue = `从 ${format(from, "yyyy-MM-dd")}`;
+        } else if (to) {
+          displayValue = `至 ${format(to, "yyyy-MM-dd")}`;
+        } else {
+          displayValue = "未选择";
+        }
+      } else {
+        displayValue = JSON.stringify(value);
+      }
+    } else if (Array.isArray(value)) {
+      displayValue = value.length > 0 ? `${value.length}项` : "";
+    } else {
+      displayValue = String(value);
+    }
+
+    if (displayValue && displayValue !== "未选择") {
+      // 移除已存在的同key筛选，添加新的
+      activeFilters.value = activeFilters.value.filter((f) => f.key !== filterValue.key);
+      activeFilters.value.push({
+        key: filterValue.key,
+        label: option.label,
+        value: filterValue.value,
+        displayValue,
+      });
+    }
+  }
+  // 这里可以执行其他副作用（如发起搜索请求）
+  console.log("Search triggered with filters:", activeFilters.value);
+};
+
+const handleRemoveFilter = () => {
+  // 组件内部已移除，这里可以执行其他副作用
+  console.log("Filter removed, current filters:", activeFilters.value);
+};
+
+const handleClearAllFilters = () => {
+  // 组件内部已清空，这里可以执行其他副作用
+  console.log("All filters cleared");
 };
 </script>
 
@@ -68,9 +126,12 @@ const handleSearch = ({ _key, value }: FilterValue) => {
         <h2 class="text-lg font-semibold">智能搜索输入</h2>
         <SmartSearchInput
           v-model="searchValue"
+          v-model:active-filters="activeFilters"
           :options="filterOptions"
           :locale="tableLocale"
           @search="handleSearch"
+          @remove-filter="handleRemoveFilter"
+          @clear-all-filters="handleClearAllFilters"
         />
       </div>
 
