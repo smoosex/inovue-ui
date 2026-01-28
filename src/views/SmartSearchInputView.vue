@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { format } from "date-fns";
 import { SmartSearchInput } from "@/components/smart-search-input";
+import { ActiveFilterTags } from "@/components/smart-search-input";
 import type {
   FilterOption,
   FilterValue,
@@ -97,16 +98,6 @@ const handleSearch = (filterValue: FilterValue) => {
   // 这里可以执行其他副作用（如发起搜索请求）
   console.log("Search triggered with filters:", activeFilters.value);
 };
-
-const handleRemoveFilter = () => {
-  // 组件内部已移除，这里可以执行其他副作用
-  console.log("Filter removed, current filters:", activeFilters.value);
-};
-
-const handleClearAllFilters = () => {
-  // 组件内部已清空，这里可以执行其他副作用
-  console.log("All filters cleared");
-};
 </script>
 
 <template>
@@ -126,12 +117,15 @@ const handleClearAllFilters = () => {
         <h2 class="text-lg font-semibold">智能搜索输入</h2>
         <SmartSearchInput
           v-model="searchValue"
-          v-model:active-filters="activeFilters"
           :options="filterOptions"
           :locale="tableLocale"
           @search="handleSearch"
-          @remove-filter="handleRemoveFilter"
-          @clear-all-filters="handleClearAllFilters"
+        />
+
+        <ActiveFilterTags
+          :filters="activeFilters"
+          @remove="(key) => (activeFilters = activeFilters.filter((f) => f.key !== key))"
+          @clear-all="activeFilters = []"
         />
       </div>
 

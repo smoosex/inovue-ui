@@ -11,7 +11,7 @@ defineProps<{
 <template>
   <div class="flex items-center justify-between">
     <!-- Primary Actions (Left) -->
-    <div class="flex items-center gap-2">
+    <div v-if="primaryActions?.length" class="flex items-center gap-2">
       <ToolbarItem
         v-for="action in primaryActions"
         :key="action.key"
@@ -24,7 +24,7 @@ defineProps<{
     </div>
 
     <!-- Secondary Actions (Right) -->
-    <div class="flex items-center gap-2">
+    <div v-if="secondaryActions?.length" class="flex items-center gap-2">
       <ToolbarItem
         v-for="action in secondaryActions"
         :key="action.key"

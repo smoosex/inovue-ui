@@ -170,7 +170,7 @@ const getCellClass = (col: Column) => {
   <div class="h-full flex flex-col min-h-0">
     <!-- Table Area -->
     <div
-      class="flex-1 overflow-auto relative border rounded-2xl"
+      class="flex-1 overflow-auto relative border rounded-md"
       ref="scrollContainer"
     >
       <Table class="table-auto" ref="tableRef">

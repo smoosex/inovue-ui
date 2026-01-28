@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ActiveFilterTags: typeof import('./../components/smart-search-input/ActiveFilterTags.vue')['default']
     AdvancedTable: typeof import('./../components/advanced-table/AdvancedTable.vue')['default']
     AdvancedToolbar: typeof import('./../components/advanced-toolbar/AdvancedToolbar.vue')['default']
     Avatar: typeof import('./../components/ui/avatar/Avatar.vue')['default']
