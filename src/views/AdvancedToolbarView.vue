@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { AdvancedToolbar } from "@/components/advanced-toolbar";
-import { type ToolbarAction } from "@/components/advanced-toolbar";
+import { Toolbar } from "@/components/toolbar";
+import { type ToolbarAction } from "@/components/toolbar";
 import { LucidePlus, LucideEdit, LucideTrash2, LucideDownload, LucideSettings } from "lucide-vue-next";
 
 const handleAdd = () => {
@@ -78,7 +78,7 @@ const secondaryActions = ref<ToolbarAction[]>([
       </h1>
     </div>
 
-    <AdvancedToolbar
+    <Toolbar
       :primary-actions="primaryActions"
       :secondary-actions="secondaryActions"
       class="mt-4"

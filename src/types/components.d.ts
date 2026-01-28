@@ -13,7 +13,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     ActiveFilterTags: typeof import('./../components/smart-search-input/ActiveFilterTags.vue')['default']
     AdvancedTable: typeof import('./../components/advanced-table/AdvancedTable.vue')['default']
-    AdvancedToolbar: typeof import('./../components/advanced-toolbar/AdvancedToolbar.vue')['default']
     Avatar: typeof import('./../components/ui/avatar/Avatar.vue')['default']
     AvatarFallback: typeof import('./../components/ui/avatar/AvatarFallback.vue')['default']
     AvatarImage: typeof import('./../components/ui/avatar/AvatarImage.vue')['default']
@@ -211,7 +210,8 @@ declare module 'vue' {
     TimelineItem: typeof import('./../components/timeline/TimelineItem.vue')['default']
     TimelineTime: typeof import('./../components/timeline/TimelineTime.vue')['default']
     TimelineTitle: typeof import('./../components/timeline/TimelineTitle.vue')['default']
-    ToolbarItem: typeof import('./../components/advanced-toolbar/ToolbarItem.vue')['default']
+    Toolbar: typeof import('./../components/toolbar/Toolbar.vue')['default']
+    ToolbarItem: typeof import('./../components/toolbar/ToolbarItem.vue')['default']
     Tooltip: typeof import('./../components/ui/tooltip/Tooltip.vue')['default']
     TooltipContent: typeof import('./../components/ui/tooltip/TooltipContent.vue')['default']
     TooltipProvider: typeof import('./../components/ui/tooltip/TooltipProvider.vue')['default']

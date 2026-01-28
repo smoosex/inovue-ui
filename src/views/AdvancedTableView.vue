@@ -4,8 +4,8 @@ import { format } from "date-fns";
 import { Plus, Pencil, Trash2 } from "lucide-vue-next";
 import { AdvancedTable } from "@/components/advanced-table";
 import type { Column } from "@/components/advanced-table";
-import { AdvancedToolbar } from "@/components/advanced-toolbar";
-import type { ToolbarAction } from "@/components/advanced-toolbar";
+import { Toolbar } from "@/components/toolbar";
+import type { ToolbarAction } from "@/components/toolbar";
 import {
   SmartSearchInput,
   ActiveFilterTags,
@@ -189,7 +189,7 @@ onMounted(() => {
 <template>
   <div class="flex flex-col flex-1 h-full space-y-2 overflow-hidden px-4 py-2">
     <!-- Toolbar with SmartSearchInput on the right side -->
-    <AdvancedToolbar
+    <Toolbar
       :primary-actions="primaryActions"
       :secondary-actions="secondaryActions"
     >
@@ -200,7 +200,7 @@ onMounted(() => {
         :locale="tableLocale"
         @search="handleSearch"
       />
-    </AdvancedToolbar>
+    </Toolbar>
 
     <!-- Active Filters (below toolbar) -->
     <ActiveFilterTags
