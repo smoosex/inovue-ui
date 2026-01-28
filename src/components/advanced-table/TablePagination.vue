@@ -18,6 +18,11 @@ const $t = (key: Parameters<typeof getI18nText>[0]) =>
 
 const pageNum = defineModel<number>("pageNum", { required: true });
 const pageSize = defineModel<number>("pageSize", { required: true });
+
+const pageSizeModel = computed({
+  get: () => pageSize.value,
+  set: (val) => (pageSize.value = Number(val)),
+});
 </script>
 
 <template>
@@ -53,7 +58,7 @@ const pageSize = defineModel<number>("pageSize", { required: true });
 
         <!-- Page Size Selector -->
         <li class="flex items-center gap-2 mx-2">
-          <Select v-model="pageSize">
+          <Select v-model="pageSizeModel">
             <SelectTrigger class="h-9 w-20">
               <SelectValue :placeholder="pageSize.toString()" />
             </SelectTrigger>
@@ -61,7 +66,7 @@ const pageSize = defineModel<number>("pageSize", { required: true });
               <SelectItem
                 v-for="size in pageSizes"
                 :key="size"
-                :value="size.toString()"
+                :value="size"
               >
                 {{ size }}
               </SelectItem>

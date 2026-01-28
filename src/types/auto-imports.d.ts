@@ -30,7 +30,6 @@ declare global {
   const isReadonly: typeof import('vue').isReadonly
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
-  const layoutOptions: typeof import('../stores/theme').layoutOptions
   const layouts: typeof import('../stores/theme').layouts
   const markRaw: typeof import('vue').markRaw
   const nextTick: typeof import('vue').nextTick
@@ -69,7 +68,6 @@ declare global {
   const unref: typeof import('vue').unref
   const useAttrs: typeof import('vue').useAttrs
   const useAuthStore: typeof import('../stores/auth').useAuthStore
-  const useColumnPreferencesStore: typeof import('../stores/columnPreferences').useColumnPreferencesStore
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useI18n: typeof import('vue-i18n').useI18n

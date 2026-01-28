@@ -9,7 +9,6 @@ export const handlers = [
     const pageNum = Number(url.searchParams.get("pageNum")) || 1;
     const pageSize = Number(url.searchParams.get("pageSize")) || 10;
 
-    console.log(pageNum, pageSize);
     const start = (pageNum - 1) * pageSize;
     const end = start + pageSize;
     const list = UsersData.slice(start, end);

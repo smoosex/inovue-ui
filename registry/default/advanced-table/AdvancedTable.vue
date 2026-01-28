@@ -10,6 +10,14 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 type Props = {
   data: T[];
@@ -159,7 +167,7 @@ const getCellClass = (col: Column) => {
 </script>
 
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full flex flex-col min-h-0">
     <!-- Table Area -->
     <div
       class="flex-1 overflow-auto relative border rounded-2xl"
@@ -321,3 +329,9 @@ const getCellClass = (col: Column) => {
     />
   </div>
 </template>
+
+<style scoped>
+:deep(.relative.w-full.overflow-auto) {
+  overflow: visible !important;
+}
+</style>
