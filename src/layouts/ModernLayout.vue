@@ -7,7 +7,7 @@ import SiteHeader from "./components/SiteHeader.vue";
   <div class="h-screen flex">
     <SidebarProvider>
       <AppSidebar layout="modern" />
-      <SidebarInset>
+      <SidebarInset class="overflow-hidden flex flex-col">
         <SiteHeader layout="modern" />
         <div class="flex-1 overflow-hidden px-4 pb-2">
           <router-view />
