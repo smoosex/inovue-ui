@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { Button } from "@/components/ui/button";
 import { RangeCalendar } from "@/components/ui/range-calendar";
 import {
   Popover,
@@ -7,6 +8,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import {
+  format,
+  isValid,
+} from "date-fns";
+import { enUS, zhCN, type Locale } from "date-fns/locale";
 import { CheckIcon, ChevronDownIcon } from "lucide-vue-next";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 import { toDate } from "reka-ui/date";
@@ -14,24 +20,32 @@ import DateInput from "./DateInput.vue";
 import type { DateRange } from "./types";
 import type { DateRange as RekaDateRange } from "reka-ui";
 import { PRESETS } from "./types";
+import { getI18nText, type Locale as I18nLocale } from "./locales";
 
 const modelValue = defineModel<DateRange>();
 
 const props = withDefaults(
   defineProps<{
     align?: "start" | "center" | "end";
-    locale?: string;
+    locale?: I18nLocale;
     class?: string;
   }>(),
   {
     align: "center",
-    locale: "en-US",
+    locale: "en",
   }
 );
 
 const emit = defineEmits<{
   update: [payload: { range: DateRange }];
 }>();
+
+const currentLocale = computed<Locale>(() => {
+  return props.locale === "zhHans" ? zhCN : enUS;
+});
+
+const $t = (key: Parameters<typeof getI18nText>[0]) =>
+  getI18nText(key, props.locale);
 
 const dateToDateValue = (date: Date): DateValue => {
   return new CalendarDate(
@@ -45,12 +59,11 @@ const dateValueToDate = (dateValue: DateValue): Date => {
   return toDate(dateValue);
 };
 
-const formatDate = (date: Date, locale = "en-us"): string => {
-  return date.toLocaleDateString(locale, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+const formatDate = (date: Date | undefined, locale: Locale): string => {
+  if (!date || !isValid(date)) {
+  return "Select date"
+  }
+  return format(date, "PPP", { locale })
 };
 
 const isOpen = ref(false);
@@ -253,10 +266,10 @@ const handleUpdate = () => {
           )
         "
       >
-        {{ formatDate(range.from, locale) }}
+        {{ formatDate(range.from, currentLocale) }}
         <template v-if="range.to">
           <ChevronDownIcon class="mx-2 h-4 w-4" />
-          {{ formatDate(range.to, locale) }}
+          {{ formatDate(range.to, currentLocale) }}
         </template>
       </Button>
     </PopoverTrigger>
@@ -298,7 +311,7 @@ const handleUpdate = () => {
         <!-- Presets Section -->
         <div class="lg:border-l lg:pl-4 space-y-2">
           <h3 class="font-medium text-sm">
-            Presets
+            {{ $t('presets') }}
           </h3>
           <div class="grid grid-cols-2 lg:grid-cols-1 gap-1">
             <Button
@@ -321,7 +334,7 @@ const handleUpdate = () => {
                   )
                 "
               />
-              {{ preset.label }}
+              {{ $t(preset.name as Parameters<typeof getI18nText>[0]) }}
             </Button>
           </div>
         </div>
@@ -329,8 +342,8 @@ const handleUpdate = () => {
 
       <!-- Footer Actions -->
       <div class="flex items-center justify-end gap-2 p-4 border-t">
-        <Button variant="ghost" @click="handleCancel">Cancel</Button>
-        <Button @click="handleUpdate">Confirm</Button>
+        <Button variant="ghost" @click="handleCancel">{{ $t("cancel") }}</Button>
+        <Button @click="handleUpdate">{{ $t("confirm") }}</Button>
       </div>
     </PopoverContent>
   </Popover>

@@ -27,8 +27,8 @@ const activeParentId = ref("1");
           :active-parent-id="activeParentId"
           class="h-[calc(100svh-var(--header-height))]!"
         />
-        <SidebarInset class="flex-1 overflow-auto">
-          <div class="p-4 md:p-6 mb-6 flex items-center gap-4">
+        <SidebarInset class="flex-1 overflow-hidden">
+          <div class="p-4 flex items-center gap-4">
             <Button
               v-if="route.meta.showBack"
               variant="outline"
@@ -40,7 +40,9 @@ const activeParentId = ref("1");
             </Button>
             <AppBreadcrumb />
           </div>
-          <router-view />
+          <div class="flex-1 px-4 pb-2 overflow-auto">
+            <router-view />
+          </div>
         </SidebarInset>
       </div>
     </SidebarProvider>

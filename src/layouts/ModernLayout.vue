@@ -4,12 +4,14 @@ import SiteHeader from "./components/SiteHeader.vue";
 </script>
 
 <template>
-  <div>
+  <div class="h-screen flex">
     <SidebarProvider>
       <AppSidebar layout="modern" />
       <SidebarInset>
         <SiteHeader layout="modern" />
-        <router-view />
+        <div class="flex-1 overflow-hidden px-4 pb-2">
+          <router-view />
+        </div>
       </SidebarInset>
     </SidebarProvider>
   </div>
