@@ -8,22 +8,22 @@
   "registryDependencies": [],
   "files": [
     {
-      "path": "registry/default/toolbar/Toolbar.vue",
+      "path": "src/components/toolbar/Toolbar.vue",
       "content": "<script setup lang=\"ts\">\nimport type { ToolbarAction } from \"./types\";\nimport ToolbarItem from \"./ToolbarItem.vue\";\n\ndefineProps<{\n  primaryActions?: ToolbarAction[];\n  secondaryActions?: ToolbarAction[];\n}>();\n</script>\n\n<template>\n  <div class=\"flex items-center justify-between\">\n    <!-- Primary Actions (Left) -->\n    <div v-if=\"primaryActions?.length\" class=\"flex items-center gap-2\">\n      <ToolbarItem\n        v-for=\"action in primaryActions\"\n        :key=\"action.key\"\n        :action=\"action\"\n      />\n    </div>\n\n    <div class=\"flex-1 flex justify-end px-4\">\n      <slot />\n    </div>\n\n    <!-- Secondary Actions (Right) -->\n    <div v-if=\"secondaryActions?.length\" class=\"flex items-center gap-2\">\n      <ToolbarItem\n        v-for=\"action in secondaryActions\"\n        :key=\"action.key\"\n        :action=\"action\"\n      />\n    </div>\n  </div>\n</template>\n",
       "type": "registry:component"
     },
     {
-      "path": "registry/default/toolbar/types.ts",
+      "path": "src/components/toolbar/types.ts",
       "content": "import type { Component } from \"vue\";\n\nexport interface ToolbarAction {\n  key: string;\n  label?: string;\n  icon?: Component;\n  variant?:\n    | \"default\"\n    | \"destructive\"\n    | \"outline\"\n    | \"ghost\"\n    | \"secondary\"\n    | \"link\";\n  size?: \"default\" | \"sm\" | \"lg\" | \"icon\";\n  show?: boolean;\n  disabled?: boolean;\n  onClick?: () => void;\n  isIconOnly?: boolean;\n  tooltip?: string;\n}\n",
       "type": "registry:component"
     },
     {
-      "path": "registry/default/toolbar/index.ts",
+      "path": "src/components/toolbar/index.ts",
       "content": "import Toolbar from \"./Toolbar.vue\";\nexport * from \"./types\";\n\nexport { Toolbar };\nexport default Toolbar;\n",
       "type": "registry:component"
     },
     {
-      "path": "registry/default/toolbar/ToolbarItem.vue",
+      "path": "src/components/toolbar/ToolbarItem.vue",
       "content": "<script setup lang=\"ts\">\nimport type { ToolbarAction } from \"./types\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n} from \"@/components/ui/tooltip\";\n\ndefineProps<{\n  action: ToolbarAction;\n}>();\n</script>\n\n<template>\n  <template v-if=\"action.show !== false\">\n    <!-- Icon Only Button with Tooltip -->\n    <Tooltip v-if=\"action.isIconOnly\">\n      <TooltipTrigger as-child>\n        <Button\n          :variant=\"action.variant || 'outline'\"\n          :size=\"action.size || 'icon'\"\n          :disabled=\"action.disabled\"\n          @click=\"action.onClick\"\n        >\n          <component :is=\"action.icon\" class=\"h-4 w-4\" />\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent>\n        <p>{{ action.tooltip || action.label }}</p>\n      </TooltipContent>\n    </Tooltip>\n\n    <!-- Regular Button -->\n    <Button\n      v-else\n      :variant=\"action.variant || 'default'\"\n      :size=\"action.size || 'sm'\"\n      :disabled=\"action.disabled\"\n      @click=\"action.onClick\"\n    >\n      <component :is=\"action.icon\" v-if=\"action.icon\" class=\"h-4 w-4\" />\n      {{ action.label }}\n    </Button>\n  </template>\n</template>\n",
       "type": "registry:component"
     }

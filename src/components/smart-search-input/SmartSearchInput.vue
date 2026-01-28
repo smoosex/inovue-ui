@@ -41,7 +41,7 @@ const $t = (key: Parameters<typeof GetI18nText>[0]) =>
 
 const selectedKey = ref(props.options[0]?.value || "");
 const currentOption = computed(() =>
-  props.options.find((o) => o.value === selectedKey.value)
+  props.options.find((o) => o.value === selectedKey.value),
 );
 
 const resolveComponent = (type?: FilterInputType) => {
@@ -78,7 +78,7 @@ const getDefaultValue = (type?: FilterInputType): AnyFilterValue => {
 
 // Initialize with correct type based on first option
 const currentValue = ref<AnyFilterValue>(
-  getDefaultValue(props.options[0]?.type)
+  getDefaultValue(props.options[0]?.type),
 );
 
 // Reset value and lazy load options when key changes
@@ -103,22 +103,25 @@ watch(
       selectedKey.value = newOptions[0]?.value || "";
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
-const formatFilterValue = (value: AnyFilterValue, type?: FilterInputType): string => {
+const formatFilterValue = (
+  value: AnyFilterValue,
+  type?: FilterInputType,
+): string => {
   switch (type) {
     case "multi-select":
     case "tree-multi-select": {
       if (!Array.isArray(value) || value.length === 0) return "";
-      const labels = currentOption.value?.options?.filter(
-        (opt) => value.includes(opt.value)
-      ).map((opt) => opt.label);
+      const labels = currentOption.value?.options
+        ?.filter((opt) => value.includes(opt.value))
+        .map((opt) => opt.label);
       return labels?.join(", ") || value.map(String).join(", ");
     }
     case "select": {
       const label = currentOption.value?.options?.find(
-        (opt) => opt.value === value
+        (opt) => opt.value === value,
       )?.label;
       return label || String(value ?? "");
     }
@@ -144,12 +147,15 @@ const handleSearch = () => {
   const newItem: ActiveFilterItem = {
     key: selectedKey.value,
     label: currentOption.value?.label || "",
-    value: currentValue.value,
-    displayValue: formatFilterValue(currentValue.value, currentOption.value?.type),
+    value: formattedValue,
+    displayValue: formatFilterValue(
+      currentValue.value,
+      currentOption.value?.type,
+    ),
   };
 
   const existingIndex = activeFilters.value.findIndex(
-    (f) => f.key === selectedKey.value
+    (f) => f.key === selectedKey.value,
   );
   if (existingIndex >= 0) {
     activeFilters.value[existingIndex] = newItem;

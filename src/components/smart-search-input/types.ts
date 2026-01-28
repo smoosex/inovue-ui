@@ -63,7 +63,7 @@ export type FilterValue<T = AnyFilterValue> = {
 export type ActiveFilterItem = {
   key: string;
   label: string;
-  value: string | number | (string | number)[] | DateTimeRange | CascadeValue;
+  value: unknown;
   displayValue: string;
 };
 

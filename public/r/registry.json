@@ -23,27 +23,27 @@
       ],
       "files": [
         {
-          "path": "registry/default/advanced-table/AdvancedTable.vue",
+          "path": "src/components/advanced-table/AdvancedTable.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-table/locales.ts",
+          "path": "src/components/advanced-table/locales.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-table/types.ts",
+          "path": "src/components/advanced-table/types.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-table/index.ts",
+          "path": "src/components/advanced-table/index.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-table/TablePagination.vue",
+          "path": "src/components/advanced-table/TablePagination.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-table/ColumnToggle.vue",
+          "path": "src/components/advanced-table/ColumnToggle.vue",
           "type": "registry:component"
         }
       ]
@@ -57,19 +57,19 @@
       "registryDependencies": [],
       "files": [
         {
-          "path": "registry/default/toolbar/Toolbar.vue",
+          "path": "src/components/toolbar/Toolbar.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/toolbar/types.ts",
+          "path": "src/components/toolbar/types.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/toolbar/index.ts",
+          "path": "src/components/toolbar/index.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/toolbar/ToolbarItem.vue",
+          "path": "src/components/toolbar/ToolbarItem.vue",
           "type": "registry:component"
         }
       ]
@@ -83,35 +83,35 @@
       "registryDependencies": ["range-calendar", "popover", "input", "button"],
       "files": [
         {
-          "path": "registry/default/date-time-range-picker/DateInput.vue",
+          "path": "src/components/date-time-range-picker/DateInput.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/TimeInput.vue",
+          "path": "src/components/date-time-range-picker/TimeInput.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/DateTimeInput.vue",
+          "path": "src/components/date-time-range-picker/DateTimeInput.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/DateRangePicker.vue",
+          "path": "src/components/date-time-range-picker/DateRangePicker.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/DateTimeRangePicker.vue",
+          "path": "src/components/date-time-range-picker/DateTimeRangePicker.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/types.ts",
+          "path": "src/components/date-time-range-picker/types.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/locales.ts",
+          "path": "src/components/date-time-range-picker/locales.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/date-time-range-picker/index.ts",
+          "path": "src/components/date-time-range-picker/index.ts",
           "type": "registry:component"
         }
       ]
@@ -134,47 +134,47 @@
       ],
       "files": [
         {
-          "path": "registry/default/smart-search-input/ActiveFilterTags.vue",
+          "path": "src/components/smart-search-input/ActiveFilterTags.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/SmartSearchInput.vue",
+          "path": "src/components/smart-search-input/SmartSearchInput.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/types.ts",
+          "path": "src/components/smart-search-input/types.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/locales.ts",
+          "path": "src/components/smart-search-input/locales.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/index.ts",
+          "path": "src/components/smart-search-input/index.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterInput.vue",
+          "path": "src/components/smart-search-input/FilterInput.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterSelect.vue",
+          "path": "src/components/smart-search-input/FilterSelect.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterMultiSelect.vue",
+          "path": "src/components/smart-search-input/FilterMultiSelect.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterTreeSelect.vue",
+          "path": "src/components/smart-search-input/FilterTreeSelect.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterTreeSelectOption.vue",
+          "path": "src/components/smart-search-input/FilterTreeSelectOption.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/smart-search-input/FilterCascadeSelect.vue",
+          "path": "src/components/smart-search-input/FilterCascadeSelect.vue",
           "type": "registry:component"
         }
       ]
