@@ -37,6 +37,6 @@ const translations = {
   },
 } as const;
 
-export function getI18nText(key: keyof typeof translations.en, locale: Locale) {
+export function GetI18nText(key: keyof typeof translations.en, locale: Locale) {
   return translations[locale][key] || translations.en[key];
 }

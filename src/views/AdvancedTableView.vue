@@ -6,7 +6,10 @@ import { AdvancedTable } from "@/components/advanced-table";
 import type { Column } from "@/components/advanced-table";
 import { AdvancedToolbar } from "@/components/advanced-toolbar";
 import type { ToolbarAction } from "@/components/advanced-toolbar";
-import { SmartSearchInput, ActiveFilterTags } from "@/components/smart-search-input";
+import {
+  SmartSearchInput,
+  ActiveFilterTags,
+} from "@/components/smart-search-input";
 import type {
   FilterOption,
   FilterValue,
@@ -17,7 +20,7 @@ import { GetUsersApi, type User } from "@/features/users/api";
 
 const { locale } = useI18n();
 
-const tableLocale = computed(() => locale.value === "en" ? "en" : "zhHans");
+const tableLocale = computed(() => (locale.value === "en" ? "en" : "zhHans"));
 
 const pageNum = ref(1);
 const pageSize = ref(10);
@@ -106,7 +109,9 @@ const secondaryActions: ToolbarAction[] = [
   },
   {
     key: "column-toggle",
-    label: computed(() => showColumnToggle.value ? "隐藏列设置" : "显示列设置").value,
+    label: computed(() =>
+      showColumnToggle.value ? "隐藏列设置" : "显示列设置",
+    ).value,
     variant: "outline",
     onClick: () => {
       showColumnToggle.value = !showColumnToggle.value;
@@ -146,7 +151,9 @@ const handleSearch = (filterValue: FilterValue) => {
   if (option) {
     const displayValue = formatFilterValue(filterValue.value);
     if (displayValue && displayValue !== "未选择") {
-      activeFilters.value = activeFilters.value.filter((f) => f.key !== filterValue.key);
+      activeFilters.value = activeFilters.value.filter(
+        (f) => f.key !== filterValue.key,
+      );
       activeFilters.value.push({
         key: filterValue.key,
         label: option.label,
@@ -166,8 +173,7 @@ const handleClearAllFilters = () => {
   fetchUsers();
 };
 
-const handleRemoveFilterTag = (key: string) => {
-  activeFilters.value = activeFilters.value.filter((f) => f.key !== key);
+const handleRemoveFilterTag = () => {
   handleRemoveFilter();
 };
 
@@ -193,16 +199,18 @@ onMounted(() => {
         :options="filterOptions"
         :locale="tableLocale"
         @search="handleSearch"
-        @remove-filter="handleRemoveFilter"
-        @clear-all-filters="handleClearAllFilters"
       />
     </AdvancedToolbar>
 
     <!-- Active Filters (below toolbar) -->
     <ActiveFilterTags
       :filters="activeFilters"
+      :locale="tableLocale"
       @remove="handleRemoveFilterTag"
-      @clear-all="activeFilters = []; handleClearAllFilters()"
+      @clear-all="
+        activeFilters = [];
+        handleClearAllFilters();
+      "
     />
 
     <!-- Content -->

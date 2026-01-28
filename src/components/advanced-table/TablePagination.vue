@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-vue-next";
-import { getI18nText, type Locale } from "./locales";
+import { GetI18nText, type Locale } from "./locales";
 
 type Props = {
   total: number;
@@ -10,11 +10,11 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   pageSizes: () => [10, 20, 50, 100],
-  locale: "zhHans",
+  locale: "en",
 });
 
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, props.locale);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const pageNum = defineModel<number>("pageNum", { required: true });
 const pageSize = defineModel<number>("pageSize", { required: true });
@@ -63,11 +63,7 @@ const pageSizeModel = computed({
               <SelectValue :placeholder="pageSize.toString()" />
             </SelectTrigger>
             <SelectContent side="top">
-              <SelectItem
-                v-for="size in pageSizes"
-                :key="size"
-                :value="size"
-              >
+              <SelectItem v-for="size in pageSizes" :key="size" :value="size">
                 {{ size }}
               </SelectItem>
             </SelectContent>

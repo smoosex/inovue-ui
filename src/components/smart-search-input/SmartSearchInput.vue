@@ -7,7 +7,7 @@ import type {
   FilterInputType,
   AnyFilterValue,
 } from "./types";
-import { getI18nText, type Locale } from "./locales";
+import { GetI18nText, type Locale } from "./locales";
 import FilterInput from "./FilterInput.vue";
 import FilterSelect from "./FilterSelect.vue";
 import FilterMultiSelect from "./FilterMultiSelect.vue";
@@ -15,10 +15,15 @@ import FilterTreeSelect from "./FilterTreeSelect.vue";
 import FilterCascadeSelect from "./FilterCascadeSelect.vue";
 import { DateTimeRangePicker } from "@/components/date-time-range-picker";
 
-const props = defineProps<{
-  options: FilterOption[];
-  locale?: Locale;
-}>();
+const props = withDefaults(
+  defineProps<{
+    options: FilterOption[];
+    locale?: Locale;
+  }>(),
+  {
+    locale: "en",
+  },
+);
 
 const emit = defineEmits<{
   (e: "search", value: FilterValue): void;
@@ -26,9 +31,8 @@ const emit = defineEmits<{
   (e: "loadChildren", parentId: string): void;
 }>();
 
-const locale = computed(() => props.locale || "en");
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, locale.value);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const selectedKey = ref(props.options[0]?.value || "");
 const currentOption = computed(() =>

@@ -3,7 +3,7 @@ import { computed, ref, watch, nextTick, onMounted } from "vue";
 import ColumnToggle from "./ColumnToggle.vue";
 import TablePagination from "./TablePagination.vue";
 import type { Column, Locale } from "./types";
-import { getI18nText } from "./locales";
+import { GetI18nText } from "./locales";
 import { useResizeObserver } from "@vueuse/core";
 import {
   Tooltip,
@@ -35,11 +35,11 @@ const props = withDefaults(defineProps<Props>(), {
   showColumnToggle: true,
   loading: false,
   rowKey: "id",
-  locale: "zhHans",
+  locale: "en",
 });
 
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, props.locale);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const selectedIds = defineModel<string[]>("selectedIds", { default: [] });
 const columns = defineModel<Column[]>("columns", { required: true });
