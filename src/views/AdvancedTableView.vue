@@ -1,21 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, watch, computed } from "vue";
-import { format } from "date-fns";
 import { Plus, Pencil, Trash2 } from "lucide-vue-next";
 import { AdvancedTable } from "@/components/advanced-table";
-import type { Column } from "@/components/advanced-table";
-import { Toolbar } from "@/components/toolbar";
-import type { ToolbarAction } from "@/components/toolbar";
-import {
-  SmartSearchInput,
-  ActiveFilterTags,
-} from "@/components/smart-search-input";
-import type {
-  FilterOption,
-  FilterValue,
-  AnyFilterValue,
-  ActiveFilterItem,
-} from "@/components/smart-search-input";
+import type { Column, FilterOption, ToolbarAction } from "@/components/advanced-table";
 import { GetUsersApi, type User } from "@/features/users/api";
 
 const { locale } = useI18n();
@@ -29,8 +16,7 @@ const selectedIds = ref<string[]>([]);
 const showColumnToggle = ref(true);
 const loading = ref(false);
 
-const searchValue = ref<AnyFilterValue>();
-const activeFilters = ref<ActiveFilterItem[]>([]);
+const activeFilters = ref<{ key: string; label: string; value: any; displayValue: string }[]>([]);
 
 const columns = reactive<Column[]>([
   { label: "ID", value: "id", show: true, originalIndex: 0, width: "80px" },
@@ -125,43 +111,7 @@ const secondaryActions: ToolbarAction[] = [
   },
 ];
 
-const formatFilterValue = (value: any): string => {
-  if (value && typeof value === "object") {
-    if ("from" in value && "to" in value) {
-      const from = value.from ? new Date(value.from) : null;
-      const to = value.to ? new Date(value.to) : null;
-      if (from && to) {
-        return `${format(from, "yyyy-MM-dd")} ~ ${format(to, "yyyy-MM-dd")}`;
-      } else if (from) {
-        return `从 ${format(from, "yyyy-MM-dd")}`;
-      } else if (to) {
-        return `至 ${format(to, "yyyy-MM-dd")}`;
-      }
-    }
-    return JSON.stringify(value);
-  } else if (Array.isArray(value)) {
-    return value.length > 0 ? `${value.length}项` : "";
-  }
-  return String(value);
-};
-
-const handleSearch = (filterValue: FilterValue) => {
-  searchValue.value = filterValue.value;
-  const option = filterOptions.find((o) => o.value === filterValue.key);
-  if (option) {
-    const displayValue = formatFilterValue(filterValue.value);
-    if (displayValue && displayValue !== "未选择") {
-      activeFilters.value = activeFilters.value.filter(
-        (f) => f.key !== filterValue.key,
-      );
-      activeFilters.value.push({
-        key: filterValue.key,
-        label: option.label,
-        value: filterValue.value,
-        displayValue,
-      });
-    }
-  }
+const handleSearch = () => {
   fetchUsers();
 };
 
@@ -171,10 +121,6 @@ const handleRemoveFilter = () => {
 
 const handleClearAllFilters = () => {
   fetchUsers();
-};
-
-const handleRemoveFilterTag = () => {
-  handleRemoveFilter();
 };
 
 watch([pageNum, pageSize], () => {
@@ -188,31 +134,6 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col flex-1 h-full space-y-2 overflow-hidden px-4 py-2">
-    <!-- Toolbar with SmartSearchInput on the right side -->
-    <Toolbar
-      :primary-actions="primaryActions"
-      :secondary-actions="secondaryActions"
-    >
-      <SmartSearchInput
-        v-model="searchValue"
-        v-model:active-filters="activeFilters"
-        :options="filterOptions"
-        :locale="tableLocale"
-        @search="handleSearch"
-      />
-    </Toolbar>
-
-    <!-- Active Filters (below toolbar) -->
-    <ActiveFilterTags
-      :filters="activeFilters"
-      :locale="tableLocale"
-      @remove="handleRemoveFilterTag"
-      @clear-all="
-        activeFilters = [];
-        handleClearAllFilters();
-      "
-    />
-
     <!-- Content -->
     <div class="flex-1 overflow-hidden rounded-md flex flex-col">
       <AdvancedTable
@@ -220,13 +141,22 @@ onMounted(() => {
         v-model:columns="columns"
         v-model:page-num="pageNum"
         v-model:page-size="pageSize"
+        v-model:active-filters="activeFilters"
         :data="mockData"
         :total="total"
         :loading="loading"
         :show-column-toggle="showColumnToggle"
+        :show-toolbar="true"
+        :toolbar-primary-actions="primaryActions"
+        :toolbar-secondary-actions="secondaryActions"
+        :show-smart-search="true"
+        :filter-options="filterOptions"
+        :show-active-filters="true"
         :locale="tableLocale"
+        @search="handleSearch"
+        @filter-remove="handleRemoveFilter"
+        @filter-clear-all="handleClearAllFilters"
         class="flex-1 min-h-0"
-        @reset="fetchUsers"
       />
     </div>
   </div>

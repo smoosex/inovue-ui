@@ -18,6 +18,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Toolbar } from "@/components/toolbar";
+import type { ToolbarAction } from "@/components/toolbar";
+import {
+  SmartSearchInput,
+  ActiveFilterTags,
+} from "@/components/smart-search-input";
+import type {
+  FilterOption,
+  FilterValue,
+  ActiveFilterItem,
+} from "@/components/smart-search-input";
 
 type Props = {
   data: T[];
@@ -28,6 +39,12 @@ type Props = {
   rowKey?: string;
   locale?: Locale;
   onReset?: () => void;
+  showToolbar?: boolean;
+  showSmartSearch?: boolean;
+  showActiveFilters?: boolean;
+  toolbarPrimaryActions?: ToolbarAction[];
+  toolbarSecondaryActions?: ToolbarAction[];
+  filterOptions?: FilterOption[];
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,7 +53,16 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   rowKey: "id",
   locale: "en",
+  showToolbar: false,
+  showSmartSearch: false,
+  showActiveFilters: false,
 });
+
+const emit = defineEmits<{
+  (e: "search", value: FilterValue): void;
+  (e: "filter-remove", key: string): void;
+  (e: "filter-clear-all"): void;
+}>();
 
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
@@ -45,6 +71,7 @@ const selectedIds = defineModel<string[]>("selectedIds", { default: [] });
 const columns = defineModel<Column[]>("columns", { required: true });
 const pageNum = defineModel<number>("pageNum", { required: true });
 const pageSize = defineModel<number>("pageSize", { required: true });
+const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", { default: () => [] });
 
 const visibleColumns = computed(() => columns.value.filter((col) => col.show));
 
@@ -168,6 +195,29 @@ const getCellClass = (col: Column) => {
 
 <template>
   <div class="h-full flex flex-col min-h-0">
+    <!-- Toolbar Area -->
+    <div v-if="showToolbar" class="mb-2">
+      <Toolbar
+        :primary-actions="toolbarPrimaryActions"
+        :secondary-actions="toolbarSecondaryActions"
+      >
+        <SmartSearchInput
+          v-if="showSmartSearch && filterOptions"
+          v-model:active-filters="activeFilters"
+          :options="filterOptions"
+          :locale="props.locale"
+          @search="(fv) => emit('search', fv)"
+        />
+      </Toolbar>
+      <ActiveFilterTags
+        v-if="showActiveFilters"
+        v-model:filters="activeFilters"
+        :locale="props.locale"
+        @remove="(key) => emit('filter-remove', key)"
+        @clear-all="emit('filter-clear-all')"
+      />
+    </div>
+
     <!-- Table Area -->
     <div
       class="flex-1 overflow-auto relative border rounded-md"

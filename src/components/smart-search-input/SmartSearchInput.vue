@@ -6,6 +6,7 @@ import type {
   FilterValue,
   FilterInputType,
   AnyFilterValue,
+  ActiveFilterItem,
 } from "./types";
 import { GetI18nText, type Locale } from "./locales";
 import FilterInput from "./FilterInput.vue";
@@ -30,6 +31,10 @@ const emit = defineEmits<{
   (e: "loadMore", filterKey: string): void;
   (e: "loadChildren", parentId: string): void;
 }>();
+
+const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", {
+  default: () => [],
+});
 
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
@@ -101,16 +106,58 @@ watch(
   { immediate: true }
 );
 
+const formatFilterValue = (value: AnyFilterValue, type?: FilterInputType): string => {
+  switch (type) {
+    case "multi-select":
+    case "tree-multi-select": {
+      if (!Array.isArray(value) || value.length === 0) return "";
+      const labels = currentOption.value?.options?.filter(
+        (opt) => value.includes(opt.value)
+      ).map((opt) => opt.label);
+      return labels?.join(", ") || value.map(String).join(", ");
+    }
+    case "select": {
+      const label = currentOption.value?.options?.find(
+        (opt) => opt.value === value
+      )?.label;
+      return label || String(value ?? "");
+    }
+    case "date-time-range": {
+      const range = value as { from?: string; to?: string };
+      return `${range.from || ""} - ${range.to || ""}`;
+    }
+    case "cascade-select": {
+      const casc = value as { level1?: string; level2?: string };
+      return [casc.level1, casc.level2].filter(Boolean).join(" / ");
+    }
+    default:
+      return String(value ?? "");
+  }
+};
+
 const handleSearch = () => {
   const formatFn = currentOption.value?.formatValue;
   const formattedValue = formatFn
     ? formatFn(currentValue.value)
     : currentValue.value;
 
-  emit("search", {
+  const newItem: ActiveFilterItem = {
     key: selectedKey.value,
-    value: formattedValue,
-  });
+    label: currentOption.value?.label || "",
+    value: currentValue.value,
+    displayValue: formatFilterValue(currentValue.value, currentOption.value?.type),
+  };
+
+  const existingIndex = activeFilters.value.findIndex(
+    (f) => f.key === selectedKey.value
+  );
+  if (existingIndex >= 0) {
+    activeFilters.value[existingIndex] = newItem;
+  } else {
+    activeFilters.value.push(newItem);
+  }
+
+  emit("search", { key: selectedKey.value, value: formattedValue });
 };
 </script>
 
