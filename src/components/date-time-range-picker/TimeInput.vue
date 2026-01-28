@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, useId } from "vue";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-vue-next";

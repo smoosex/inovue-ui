@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { Button } from "@/components/ui/button";
 import { RangeCalendar } from "@/components/ui/range-calendar";
 import {
   Popover,
@@ -25,24 +26,10 @@ import { CalendarIcon, CheckIcon, ChevronRightIcon } from "lucide-vue-next";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 import { toDate } from "reka-ui/date";
 import DateTimeInput from "./DateTimeInput.vue";
-import type { DateTimeRange, Preset } from "./types";
+import type { DateTimeRange } from "./types";
+import { PRESETS } from "./types";
 import type { DateRange as RekaDateRange } from "reka-ui";
-
-const locale = ref<string>("en");
-
-const currentLocale = computed<Locale>(() => {
-  return locale.value === "zhHans" ? zhCN : enUS;
-});
-
-const PRESETS: Preset[] = [
-  { name: "last7", label: "Last 7 days" },
-  { name: "last14", label: "Last 14 days" },
-  { name: "last30", label: "Last 30 days" },
-  { name: "thisWeek", label: "This Week" },
-  { name: "lastWeek", label: "Last Week" },
-  { name: "thisMonth", label: "This Month" },
-  { name: "lastMonth", label: "Last Month" },
-];
+import { getI18nText } from "./locales";
 
 const modelValue = defineModel<DateTimeRange>();
 
@@ -51,18 +38,26 @@ const props = withDefaults(
     initialDateFrom?: Date | string;
     initialDateTo?: Date | string;
     align?: "start" | "center" | "end";
-    locale?: Locale;
+    locale?: "en" | "zhHans";
     class?: string;
   }>(),
   {
     align: "center",
-    locale: () => enUS,
+    locale: "en",
   }
 );
 
 const emit = defineEmits<{
   update: [payload: { range: DateTimeRange }];
 }>();
+
+const currentLocale = computed<Locale>(() => {
+  return props.locale === "zhHans" ? zhCN : enUS;
+});
+
+const $t = (key: Parameters<typeof getI18nText>[0]) =>
+  getI18nText(key, props.locale);
+
 
 const dateToDateValue = (date: Date): DateValue => {
   return new CalendarDate(
@@ -321,13 +316,13 @@ const handleUpdate = () => {
           <div class="flex justify-between items-center">
             <DateTimeInput
               :model-value="range.from"
-              :label="'Start'"
+              :label="$t('start')"
               @update:model-value="handleFromDateTimeChange"
             />
             <ChevronRightIcon class="mx-2 h-4 w-4" />
             <DateTimeInput
               :model-value="range.to"
-              :label="'End'"
+              :label="$t('end')"
               @update:model-value="handleToDateTimeChange"
             />
           </div>
@@ -336,7 +331,7 @@ const handleUpdate = () => {
         <!-- Presets Section -->
         <div class="lg:border-l lg:pl-4 space-y-2 p-4">
           <h3 class="font-medium text-sm">
-            Presets
+            {{ $t('presets') }}
           </h3>
           <div class="grid grid-cols-2 lg:grid-cols-1 gap-1">
             <Button
@@ -359,7 +354,7 @@ const handleUpdate = () => {
                   )
                 "
               />
-              {{ preset.label }}
+              {{ $t(preset.name as Parameters<typeof getI18nText>[0]) }}
             </Button>
           </div>
         </div>
@@ -367,8 +362,8 @@ const handleUpdate = () => {
 
       <!-- Footer Actions -->
       <div class="flex items-center justify-end gap-2 p-4 border-t">
-        <Button variant="ghost" @click="handleCancel">Cancel</Button>
-        <Button @click="handleUpdate">Confirm</Button>
+        <Button variant="ghost" @click="handleCancel">{{ $t("cancel") }}</Button>
+        <Button @click="handleUpdate">{{ $t("confirm") }}</Button>
       </div>
     </PopoverContent>
   </Popover>

@@ -69,7 +69,7 @@
       "title": "Date Time Range Picker",
       "description": "A component for selecting date and time ranges with presets support.",
       "dependencies": ["date-fns", "lucide-vue-next"],
-      "registryDependencies": ["range-calendar", "popover", "input"],
+      "registryDependencies": ["range-calendar", "popover", "input", "button"],
       "files": [
         {
           "path": "registry/default/date-time-range-picker/DateInput.vue",
@@ -96,6 +96,10 @@
           "type": "registry:component"
         },
         {
+          "path": "registry/default/date-time-range-picker/locales.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/default/date-time-range-picker/index.ts",
           "type": "registry:component"
         }
@@ -107,18 +111,10 @@
       "title": "Smart Search Input",
       "description": "An advanced search input component with filter tree, multi-select, and various input types.",
       "dependencies": ["lucide-vue-next"],
-      "registryDependencies": ["command", "button", "badge", "checkbox", "popover", "scroll-area", "dialog"],
+      "registryDependencies": ["command", "button", "badge", "checkbox", "popover", "scroll-area", "dialog", "date-time-range-picker"],
       "files": [
         {
           "path": "registry/default/smart-search-input/SmartSearchInput.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/SmartSearchInputBold.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/SmartSearchInputClassic.vue",
           "type": "registry:component"
         },
         {
@@ -126,35 +122,11 @@
           "type": "registry:component"
         },
         {
+          "path": "registry/default/smart-search-input/locales.ts",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/default/smart-search-input/index.ts",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldFieldSelector.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldMultiSelect.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldSingleSelect.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldTreeSelect.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldTreeOption.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldTextInput.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/smart-search-input/BoldDateTimeRangeInput.vue",
           "type": "registry:component"
         },
         {
