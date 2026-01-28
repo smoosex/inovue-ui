@@ -43,6 +43,6 @@ export const translations = {
   },
 } as const;
 
-export function getI18nText(key: keyof typeof translations.en, locale: Locale): string {
+export function GetI18nText(key: keyof typeof translations.en, locale: Locale): string {
   return translations[locale][key] ?? translations.en[key];
 }

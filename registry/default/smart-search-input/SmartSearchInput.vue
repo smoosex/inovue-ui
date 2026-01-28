@@ -6,8 +6,9 @@ import type {
   FilterValue,
   FilterInputType,
   AnyFilterValue,
+  ActiveFilterItem,
 } from "./types";
-import { getI18nText, type Locale } from "./locales";
+import { GetI18nText, type Locale } from "./locales";
 import FilterInput from "./FilterInput.vue";
 import FilterSelect from "./FilterSelect.vue";
 import FilterMultiSelect from "./FilterMultiSelect.vue";
@@ -15,10 +16,15 @@ import FilterTreeSelect from "./FilterTreeSelect.vue";
 import FilterCascadeSelect from "./FilterCascadeSelect.vue";
 import { DateTimeRangePicker } from "@/components/date-time-range-picker";
 
-const props = defineProps<{
-  options: FilterOption[];
-  locale?: Locale;
-}>();
+const props = withDefaults(
+  defineProps<{
+    options: FilterOption[];
+    locale?: Locale;
+  }>(),
+  {
+    locale: "en",
+  },
+);
 
 const emit = defineEmits<{
   (e: "search", value: FilterValue): void;
@@ -26,9 +32,12 @@ const emit = defineEmits<{
   (e: "loadChildren", parentId: string): void;
 }>();
 
-const locale = computed(() => props.locale || "en");
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, locale.value);
+const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", {
+  default: () => [],
+});
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const selectedKey = ref(props.options[0]?.value || "");
 const currentOption = computed(() =>
@@ -97,16 +106,58 @@ watch(
   { immediate: true }
 );
 
+const formatFilterValue = (value: AnyFilterValue, type?: FilterInputType): string => {
+  switch (type) {
+    case "multi-select":
+    case "tree-multi-select": {
+      if (!Array.isArray(value) || value.length === 0) return "";
+      const labels = currentOption.value?.options?.filter(
+        (opt) => value.includes(opt.value)
+      ).map((opt) => opt.label);
+      return labels?.join(", ") || value.map(String).join(", ");
+    }
+    case "select": {
+      const label = currentOption.value?.options?.find(
+        (opt) => opt.value === value
+      )?.label;
+      return label || String(value ?? "");
+    }
+    case "date-time-range": {
+      const range = value as { from?: string; to?: string };
+      return `${range.from || ""} - ${range.to || ""}`;
+    }
+    case "cascade-select": {
+      const casc = value as { level1?: string; level2?: string };
+      return [casc.level1, casc.level2].filter(Boolean).join(" / ");
+    }
+    default:
+      return String(value ?? "");
+  }
+};
+
 const handleSearch = () => {
   const formatFn = currentOption.value?.formatValue;
   const formattedValue = formatFn
     ? formatFn(currentValue.value)
     : currentValue.value;
 
-  emit("search", {
+  const newItem: ActiveFilterItem = {
     key: selectedKey.value,
-    value: formattedValue,
-  });
+    label: currentOption.value?.label || "",
+    value: currentValue.value,
+    displayValue: formatFilterValue(currentValue.value, currentOption.value?.type),
+  };
+
+  const existingIndex = activeFilters.value.findIndex(
+    (f) => f.key === selectedKey.value
+  );
+  if (existingIndex >= 0) {
+    activeFilters.value[existingIndex] = newItem;
+  } else {
+    activeFilters.value.push(newItem);
+  }
+
+  emit("search", { key: selectedKey.value, value: formattedValue });
 };
 </script>
 

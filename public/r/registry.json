@@ -17,7 +17,9 @@
         "sheet",
         "input",
         "select",
-        "pagination"
+        "pagination",
+        "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/smart-search-input.json",
+        "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/toolbar.json"
       ],
       "files": [
         {
@@ -47,27 +49,27 @@
       ]
     },
     {
-      "name": "advanced-toolbar",
+      "name": "toolbar",
       "type": "registry:component",
-      "title": "Advanced Toolbar",
+      "title": "Toolbar",
       "description": "A flexible toolbar component with primary and secondary action areas.",
       "dependencies": [],
       "registryDependencies": [],
       "files": [
         {
-          "path": "registry/default/advanced-toolbar/AdvancedToolbar.vue",
+          "path": "registry/default/toolbar/Toolbar.vue",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-toolbar/types.ts",
+          "path": "registry/default/toolbar/types.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-toolbar/index.ts",
+          "path": "registry/default/toolbar/index.ts",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/advanced-toolbar/ToolbarItem.vue",
+          "path": "registry/default/toolbar/ToolbarItem.vue",
           "type": "registry:component"
         }
       ]
@@ -132,6 +134,10 @@
       ],
       "files": [
         {
+          "path": "registry/default/smart-search-input/ActiveFilterTags.vue",
+          "type": "registry:component"
+        },
+        {
           "path": "registry/default/smart-search-input/SmartSearchInput.vue",
           "type": "registry:component"
         },
@@ -169,40 +175,6 @@
         },
         {
           "path": "registry/default/smart-search-input/FilterCascadeSelect.vue",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "timeline",
-      "type": "registry:component",
-      "title": "Timeline",
-      "description": "A timeline component for displaying chronological events with customizable alignment.",
-      "dependencies": [],
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "registry/default/timeline/Timeline.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/timeline/TimelineItem.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/timeline/TimelineDot.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/timeline/TimelineContent.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/timeline/TimelineTitle.vue",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/timeline/TimelineTime.vue",
           "type": "registry:component"
         }
       ]

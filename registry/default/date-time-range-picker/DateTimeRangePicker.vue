@@ -29,7 +29,7 @@ import DateTimeInput from "./DateTimeInput.vue";
 import type { DateTimeRange } from "./types";
 import { PRESETS } from "./types";
 import type { DateRange as RekaDateRange } from "reka-ui";
-import { getI18nText } from "./locales";
+import { GetI18nText } from "./locales";
 
 const modelValue = defineModel<DateTimeRange>();
 
@@ -55,8 +55,8 @@ const currentLocale = computed<Locale>(() => {
   return props.locale === "zhHans" ? zhCN : enUS;
 });
 
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, props.locale);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 
 const dateToDateValue = (date: Date): DateValue => {
@@ -354,7 +354,7 @@ const handleUpdate = () => {
                   )
                 "
               />
-              {{ $t(preset.name as Parameters<typeof getI18nText>[0]) }}
+              {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
             </Button>
           </div>
         </div>

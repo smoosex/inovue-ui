@@ -20,7 +20,7 @@ import DateInput from "./DateInput.vue";
 import type { DateRange } from "./types";
 import type { DateRange as RekaDateRange } from "reka-ui";
 import { PRESETS } from "./types";
-import { getI18nText, type Locale as I18nLocale } from "./locales";
+import { GetI18nText, type Locale as I18nLocale } from "./locales";
 
 const modelValue = defineModel<DateRange>();
 
@@ -44,8 +44,8 @@ const currentLocale = computed<Locale>(() => {
   return props.locale === "zhHans" ? zhCN : enUS;
 });
 
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, props.locale);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const dateToDateValue = (date: Date): DateValue => {
   return new CalendarDate(
@@ -334,7 +334,7 @@ const handleUpdate = () => {
                   )
                 "
               />
-              {{ $t(preset.name as Parameters<typeof getI18nText>[0]) }}
+              {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
             </Button>
           </div>
         </div>

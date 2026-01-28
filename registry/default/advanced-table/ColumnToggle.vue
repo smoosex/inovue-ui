@@ -10,7 +10,7 @@ import {
 } from "lucide-vue-next";
 import { VueDraggable } from "vue-draggable-plus";
 import type { Column, Locale } from "./types";
-import { getI18nText } from "./locales";
+import { GetI18nText } from "./locales";
 
 const props = withDefaults(
   defineProps<{
@@ -23,8 +23,8 @@ const props = withDefaults(
   },
 );
 
-const $t = (key: Parameters<typeof getI18nText>[0]) =>
-  getI18nText(key, props.locale);
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale);
 
 const emit = defineEmits(["update:modelValue"]);
 
