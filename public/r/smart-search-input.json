@@ -15,7 +15,7 @@
     "popover",
     "scroll-area",
     "dialog",
-    "date-time-range-picker"
+    "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/date-time-range-picker.json"
   ],
   "files": [
     {

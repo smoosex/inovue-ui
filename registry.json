@@ -9,7 +9,16 @@
       "title": "Advanced Table",
       "description": "A feature-rich data table component with column management, pagination, sticky headers, and auto-tooltip support.",
       "dependencies": ["vue-draggable-plus", "@vueuse/core"],
-      "registryDependencies": ["checkbox", "table", "tooltip", "button", "sheet", "input", "select", "pagination"],
+      "registryDependencies": [
+        "checkbox",
+        "table",
+        "tooltip",
+        "button",
+        "sheet",
+        "input",
+        "select",
+        "pagination"
+      ],
       "files": [
         {
           "path": "registry/default/advanced-table/AdvancedTable.vue",
@@ -111,7 +120,16 @@
       "title": "Smart Search Input",
       "description": "An advanced search input component with filter tree, multi-select, and various input types.",
       "dependencies": ["lucide-vue-next"],
-      "registryDependencies": ["command", "button", "badge", "checkbox", "popover", "scroll-area", "dialog", "date-time-range-picker"],
+      "registryDependencies": [
+        "command",
+        "button",
+        "badge",
+        "checkbox",
+        "popover",
+        "scroll-area",
+        "dialog",
+        "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/date-time-range-picker.json"
+      ],
       "files": [
         {
           "path": "registry/default/smart-search-input/SmartSearchInput.vue",
