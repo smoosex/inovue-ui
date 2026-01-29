@@ -23,6 +23,6 @@ export type {
   CascadeValue,
 } from "@/components/smart-search-input";
 
-export type {
-  ToolbarAction,
-} from "@/components/toolbar";
+export type { ToolbarAction } from "@/components/toolbar";
+
+export type RowKeyType = string | number;

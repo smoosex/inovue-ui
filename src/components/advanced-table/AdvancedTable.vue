@@ -2,7 +2,7 @@
 import { computed, ref, watch, nextTick, onMounted } from "vue";
 import ColumnToggle from "./ColumnToggle.vue";
 import TablePagination from "./TablePagination.vue";
-import type { Column, Locale } from "./types";
+import type { Column, Locale, RowKeyType } from "./types";
 import { GetI18nText } from "./locales";
 import { useResizeObserver } from "@vueuse/core";
 import {
@@ -67,7 +67,7 @@ const emit = defineEmits<{
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
 
-const selectedIds = defineModel<string[]>("selectedIds", { default: [] });
+const selectedIds = defineModel<RowKeyType[]>("selectedIds", { default: [] });
 const columns = defineModel<Column[]>("columns", { required: true });
 const pageNum = defineModel<number>("pageNum", { required: true });
 const pageSize = defineModel<number>("pageSize", { required: true });
@@ -90,7 +90,7 @@ const toggleAll = (checked: boolean) => {
   }
 };
 
-const toggleOne = (id: string, checked: boolean) => {
+const toggleOne = (id: RowKeyType, checked: boolean) => {
   const newSelected = [...selectedIds.value];
   if (checked) {
     newSelected.push(id);
