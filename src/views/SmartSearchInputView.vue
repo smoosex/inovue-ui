@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, reactive } from "vue";
 import { SmartSearchInput, ActiveFilterTags } from "@/components/smart-search-input";
-import type { ActiveFilterItem } from "@/components/smart-search-input";
+import type { ActiveFilterItem, FilterOption } from "@/components/smart-search-input";
 
 const { locale } = useI18n();
 
@@ -9,17 +9,73 @@ const tableLocale = computed(() => {
   return locale.value === "en" ? "en" : "zhHans";
 });
 
-const filterOptions = [
+// Mock user data generator
+const generateUsers = (count: number, startIndex: number) => {
+  console.log("Generating users...", count, startIndex);
+  return Array.from({ length: count }, (_, i) => ({
+    label: `User ${startIndex + i + 1}`,
+    value: `user-${startIndex + i + 1}`,
+  }));
+};
+
+const userPagination = reactive({
+  page: 1,
+  pageSize: 10,
+  total: 50,
+});
+
+const loadUsers = async (isLoadMore = false) => {
+  const userOption = filterOptions.find(o => o.value === 'users');
+  if (!userOption) return;
+
+  userOption.loading = true;
+
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  const newUsers = generateUsers(
+    userPagination.pageSize,
+    (userPagination.page - 1) * userPagination.pageSize
+  );
+
+  if (isLoadMore) {
+    userOption.options = [...(userOption.options || []), ...newUsers];
+  } else {
+    userOption.options = newUsers;
+  }
+
+  userOption.hasMore = (userOption.options?.length || 0) < userPagination.total;
+  userOption.loading = false;
+};
+
+const filterOptions = reactive<FilterOption[]>([
   {
     label: "姓名",
     value: "name",
-    type: "text" as const,
+    type: "text",
     placeholder: "请输入姓名",
+  },
+  {
+    label: "用户 (分页)",
+    value: "users",
+    type: "select",
+    options: [],
+    loading: false,
+    hasMore: true,
+    loadOptions: async () => {
+      userPagination.page = 1;
+      await loadUsers();
+    },
+    loadMore: async () => {
+      if (userPagination.page * userPagination.pageSize >= userPagination.total) return;
+      userPagination.page++;
+      await loadUsers(true);
+    }
   },
   {
     label: "状态",
     value: "status",
-    type: "select" as const,
+    type: "select",
     options: [
       { label: "全部", value: "all" },
       { label: "启用", value: "enabled" },
@@ -29,7 +85,7 @@ const filterOptions = [
   {
     label: "角色",
     value: "roles",
-    type: "multi-select" as const,
+    type: "multi-select",
     options: [
       { label: "管理员", value: "admin" },
       { label: "编辑", value: "editor" },
@@ -39,9 +95,9 @@ const filterOptions = [
   {
     label: "创建日期",
     value: "createdAt",
-    type: "date-time-range" as const,
+    type: "date-time-range",
   },
-];
+]);
 
 const activeFilters = ref<ActiveFilterItem[]>([]);
 

@@ -41,6 +41,8 @@ export type FilterOption = {
   total?: number;
   currentPage?: number;
   pageSize?: number;
+  loading?: boolean;
+  hasMore?: boolean;
   formatValue?: (value: any) => any;
   // For advanced filter in advancedSearch
   formatValueAdvanced?: (value: any) => any;
