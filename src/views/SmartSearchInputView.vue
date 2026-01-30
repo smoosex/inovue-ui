@@ -44,7 +44,9 @@ const loadUsers = async (isLoadMore = false) => {
     userOption.options = newUsers;
   }
 
-  userOption.hasMore = (userOption.options?.length || 0) < userPagination.total;
+  userOption.total = userPagination.total;
+  userOption.currentPage = userPagination.page;
+  userOption.pageSize = userPagination.pageSize;
   userOption.loading = false;
 };
 
@@ -61,7 +63,6 @@ const filterOptions = reactive<FilterOption[]>([
     type: "select",
     options: [],
     loading: false,
-    hasMore: true,
     loadOptions: async () => {
       userPagination.page = 1;
       await loadUsers();

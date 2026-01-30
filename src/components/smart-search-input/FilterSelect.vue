@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, ref } from "vue";
-import { useIntersectionObserver } from "@vueuse/core";
+import { useIntersectionObserver, useVirtualList } from "@vueuse/core";
 import { Loader2 } from "lucide-vue-next";
 import type { SelectOption } from "./types";
 import {
@@ -18,12 +18,20 @@ defineOptions({
   inheritAttrs: false,
 });
 
-const props = defineProps<{
-  options?: SelectOption[];
-  placeholder?: string;
-  loading?: boolean;
-  hasMore?: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    options?: SelectOption[];
+    placeholder?: string;
+    loading?: boolean;
+    total?: number;
+    currentPage?: number;
+    pageSize?: number;
+  }>(),
+  {
+    currentPage: 1,
+    pageSize: 20,
+  }
+);
 
 const modelValue = defineModel<string | number>();
 
@@ -42,12 +50,30 @@ const triggerClass = computed(() =>
   cn("w-50 rounded-none border focus:ring-0", attrs.class as string)
 );
 
+const hasMore = computed(() => {
+  return props.currentPage * props.pageSize < (props.total || 0);
+});
+
+const VIRTUAL_THRESHOLD = 50;
+
+const shouldUseVirtual = computed(
+  () => (props.options?.length || 0) > VIRTUAL_THRESHOLD
+);
+
+const { list, containerProps, wrapperProps } = useVirtualList(
+  computed(() => props.options || []),
+  {
+    itemHeight: 32,
+    overscan: 5,
+  }
+);
+
 const sentinel = ref<HTMLElement | null>(null);
 
 useIntersectionObserver(
   sentinel,
   ([{ isIntersecting }]) => {
-    if (isIntersecting && props.hasMore && !props.loading) {
+    if (isIntersecting && hasMore.value && !props.loading) {
       emit("load-more");
     }
   },
@@ -68,13 +94,29 @@ useIntersectionObserver(
       />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem
-        v-for="option in options"
-        :key="option.value"
-        :value="String(option.value)"
-      >
-        {{ option.label }}
-      </SelectItem>
+      <template v-if="options && options.length > 0">
+        <div v-if="shouldUseVirtual" v-bind="containerProps" class="max-h-64 overflow-auto">
+          <div v-bind="wrapperProps">
+            <SelectItem
+              v-for="{ data } in list"
+              :key="data.value"
+              :value="String(data.value)"
+              :style="{ height: '32px' }"
+            >
+              {{ data.label }}
+            </SelectItem>
+          </div>
+        </div>
+        <template v-else>
+          <SelectItem
+            v-for="option in options"
+            :key="option.value"
+            :value="String(option.value)"
+          >
+            {{ option.label }}
+          </SelectItem>
+        </template>
+      </template>
 
       <div
         v-if="hasMore || loading"

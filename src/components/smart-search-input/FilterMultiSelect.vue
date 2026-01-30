@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs } from "vue";
-import { Check, ChevronsUpDown } from "lucide-vue-next";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-vue-next";
 import type { SelectOption } from "./types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useVirtualList } from "@vueuse/core";
+import { useVirtualList, useIntersectionObserver } from "@vueuse/core";
 
 const attrs = useAttrs();
 
@@ -32,6 +32,7 @@ const props = withDefaults(
     options?: SelectOption[];
     placeholder?: string;
     id?: string;
+    loading?: boolean;
     total?: number;
     currentPage?: number;
     pageSize?: number;
@@ -48,7 +49,7 @@ const modelValue = defineModel<(string | number)[]>("modelValue", {
 
 const emit = defineEmits<{
   (e: "search"): void;
-  (e: "loadMore"): void;
+  (e: "load-more"): void;
 }>();
 
 const open = ref(false);
@@ -94,13 +95,23 @@ const handleClear = () => {
   emit("search");
 };
 
-const handleLoadMore = () => {
-  emit("loadMore");
-};
-
 const hasMore = computed(() => {
   return props.currentPage * props.pageSize < (props.total || 0);
 });
+
+const sentinel = ref<HTMLElement | null>(null);
+
+useIntersectionObserver(
+  sentinel,
+  ([{ isIntersecting }]) => {
+    if (isIntersecting && hasMore.value && !props.loading) {
+      emit("load-more");
+    }
+  },
+  {
+    threshold: 0.1,
+  }
+);
 
 const triggerClass = computed(() =>
   cn("w-50 justify-between rounded-none", attrs.class as string)
@@ -195,14 +206,14 @@ const triggerClass = computed(() =>
                 </CommandItem>
               </template>
             </template>
-            <CommandItem
-              v-if="hasMore"
-              :value="'{load-more}'"
-              class="justify-center text-center text-muted-foreground"
-              @select="handleLoadMore"
+            <div
+              v-if="hasMore || loading"
+              ref="sentinel"
+              class="flex items-center justify-center py-2 text-xs text-muted-foreground"
             >
-              Load more
-            </CommandItem>
+              <Loader2 v-if="loading" class="h-3 w-3 animate-spin mr-2" />
+              <span>{{ loading ? 'Loading...' : 'Load more' }}</span>
+            </div>
           </CommandGroup>
           <template v-if="modelValue.length > 0">
             <CommandSeparator />
