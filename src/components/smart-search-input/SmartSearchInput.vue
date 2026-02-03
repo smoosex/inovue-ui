@@ -82,15 +82,19 @@ const currentValue = ref<AnyFilterValue>(
 );
 
 // Reset value and lazy load options when key changes
-watch(selectedKey, async () => {
-  // Reset value based on type FIRST
-  currentValue.value = getDefaultValue(currentOption.value?.type);
+watch(
+  selectedKey,
+  async () => {
+    // Reset value based on type FIRST
+    currentValue.value = getDefaultValue(currentOption.value?.type);
 
-  // Lazy load options if available
-  if (currentOption.value?.loadOptions) {
-    await currentOption.value.loadOptions();
-  }
-});
+    // Lazy load options if available
+    if (currentOption.value?.loadOptions) {
+      await currentOption.value.loadOptions();
+    }
+  },
+  { immediate: true },
+);
 
 // Update selectedKey if options change and current key is invalid
 watch(
