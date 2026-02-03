@@ -2,6 +2,7 @@ export type Column = {
   label: string;
   value: string;
   show: boolean;
+  children?: Column;
   originalIndex?: number;
   hideInSetting?: boolean;
   width?: string;

@@ -5,11 +5,13 @@ import TablePagination from "./TablePagination.vue";
 import type { Column, Locale, RowKeyType } from "./types";
 import { GetI18nText } from "./locales";
 import { useResizeObserver } from "@vueuse/core";
+import { ChevronDown, ChevronRight } from "lucide-vue-next";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -35,6 +37,9 @@ type Props = {
   total: number;
   showCheckbox?: boolean;
   showColumnToggle?: boolean;
+  showExpand?: boolean;
+  rowExpandable?: (row: T) => boolean;
+  rowExpandMode?: (row: T) => "children" | "slot" | false;
   loading?: boolean;
   rowKey?: string;
   locale?: Locale;
@@ -50,6 +55,7 @@ type Props = {
 const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true,
   showColumnToggle: true,
+  showExpand: false,
   loading: false,
   rowKey: "id",
   locale: "en",
@@ -62,6 +68,10 @@ const emit = defineEmits<{
   (e: "search", value: FilterValue): void;
   (e: "filter-remove", key: string): void;
   (e: "filter-clear-all"): void;
+  (
+    e: "row-expand-change",
+    payload: { row: T; expanded: boolean; key: RowKeyType },
+  ): void;
 }>();
 
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
@@ -74,6 +84,20 @@ const pageSize = defineModel<number>("pageSize", { required: true });
 const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", { default: () => [] });
 
 const visibleColumns = computed(() => columns.value.filter((col) => col.show));
+const hasChildrenColumns = computed(() =>
+  columns.value.some((col) => Boolean(col.children)),
+);
+const useChildrenExpand = computed(() => hasChildrenColumns.value);
+const showExpandButton = computed(
+  () => useChildrenExpand.value || props.showExpand || Boolean(props.rowExpandMode),
+);
+const tableColspan = computed(
+  () =>
+    visibleColumns.value.length +
+    (props.showCheckbox ? 1 : 0) +
+    (props.showColumnToggle ? 1 : 0) +
+    (showExpandButton.value ? 1 : 0),
+);
 
 const allSelected = computed(() => {
   return (
@@ -101,6 +125,34 @@ const toggleOne = (id: RowKeyType, checked: boolean) => {
     }
   }
   selectedIds.value = newSelected;
+};
+
+const expandedIds = ref<RowKeyType[]>([]);
+const resolveExpandMode = (row: T) => {
+  if (props.rowExpandMode) return props.rowExpandMode(row);
+  if (useChildrenExpand.value) return "children";
+  return props.showExpand ? "slot" : false;
+};
+const canExpandRow = (row: T) => {
+  const mode = resolveExpandMode(row);
+  if (!mode) return false;
+  return props.rowExpandable ? props.rowExpandable(row) : true;
+};
+const getRowExpandMode = (row: T) => resolveExpandMode(row);
+const isExpanded = (key: RowKeyType) => expandedIds.value.includes(key);
+const toggleExpand = (row: T) => {
+  if (!canExpandRow(row)) return;
+  const key = row[props.rowKey] as RowKeyType;
+  const next = [...expandedIds.value];
+  const index = next.indexOf(key);
+  const expanded = index === -1;
+  if (expanded) {
+    next.push(key);
+  } else {
+    next.splice(index, 1);
+  }
+  expandedIds.value = next;
+  emit("row-expand-change", { row, expanded, key });
 };
 const scrollContainer = ref<HTMLElement | null>(null);
 const tableRef = ref<HTMLElement | null>(null);
@@ -228,6 +280,7 @@ const getCellClass = (col: Column) => {
           class="sticky top-0 z-30 bg-muted [&_th]:font-bold [&_th:first-child]:pl-4 [&_th:last-child]:pr-4"
         >
           <TableRow>
+            <TableHead v-if="showExpandButton" class="w-12.5" />
             <TableHead v-if="showCheckbox" class="w-12.5">
               <Checkbox
                 id="select-all"
@@ -271,45 +324,69 @@ const getCellClass = (col: Column) => {
         </TableHeader>
         <TableBody class="[&_tr>td:first-child]:pl-4 [&_tr>td:last-child]:pr-4">
           <template v-if="data.length > 0">
-            <TableRow v-for="row in data" :key="row[rowKey]">
-              <TableCell v-if="showCheckbox">
-                <Checkbox
-                  :id="'select-' + row[rowKey]"
-                  :model-value="selectedIds.includes(row[rowKey])"
-                  @update:model-value="
-                    (val) => toggleOne(row[rowKey], val as boolean)
-                  "
-                />
-              </TableCell>
-              <TableCell
-                v-for="col in visibleColumns"
-                :key="col.value"
-                class="whitespace-nowrap py-2 px-4 transition-shadow duration-300"
-                :style="getStickyStyle(col)"
-                :class="[
-                  {
-                    'bg-background': col.fixed && isScrollable,
-                    'shadow-[4px_0_8px_-2px_rgba(0,0,0,0.1)]':
-                      col.fixed === 'left' && isScrollable,
-                    'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]':
-                      col.fixed === 'right' &&
-                      col.value === firstRightFixedColumn?.value &&
-                      isScrollable,
-                  },
-                  getCellClass(col),
-                ]"
-              >
-                <Tooltip
-                  v-if="col.enableAutoTooltip !== false"
-                  :disabled="tooltipDisabled[`${row[rowKey]}-${col.value}`]"
+            <template v-for="row in data" :key="row[rowKey]">
+              <TableRow>
+                <TableCell v-if="showExpandButton">
+                  <Button
+                    v-if="canExpandRow(row)"
+                    variant="ghost"
+                    size="icon"
+                    class="h-7 w-7"
+                    @click="toggleExpand(row)"
+                  >
+                    <ChevronDown v-if="isExpanded(row[rowKey])" class="h-4 w-4" />
+                    <ChevronRight v-else class="h-4 w-4" />
+                  </Button>
+                </TableCell>
+                <TableCell v-if="showCheckbox">
+                  <Checkbox
+                    :id="'select-' + row[rowKey]"
+                    :model-value="selectedIds.includes(row[rowKey])"
+                    @update:model-value="
+                      (val) => toggleOne(row[rowKey], val as boolean)
+                    "
+                  />
+                </TableCell>
+                <TableCell
+                  v-for="col in visibleColumns"
+                  :key="col.value"
+                  class="whitespace-nowrap py-2 px-4 transition-shadow duration-300"
+                  :style="getStickyStyle(col)"
+                  :class="[
+                    {
+                      'bg-background': col.fixed && isScrollable,
+                      'shadow-[4px_0_8px_-2px_rgba(0,0,0,0.1)]':
+                        col.fixed === 'left' && isScrollable,
+                      'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]':
+                        col.fixed === 'right' &&
+                        col.value === firstRightFixedColumn?.value &&
+                        isScrollable,
+                    },
+                    getCellClass(col),
+                  ]"
                 >
-                  <TooltipTrigger as-child>
-                    <div
-                      class="truncate min-w-0"
-                      @mouseenter="
-                        checkOverflow($event, `${row[rowKey]}-${col.value}`)
-                      "
-                    >
+                  <Tooltip
+                    v-if="col.enableAutoTooltip !== false"
+                    :disabled="tooltipDisabled[`${row[rowKey]}-${col.value}`]"
+                  >
+                    <TooltipTrigger as-child>
+                      <div
+                        class="truncate min-w-0"
+                        @mouseenter="
+                          checkOverflow($event, `${row[rowKey]}-${col.value}`)
+                        "
+                      >
+                        <slot
+                          name="cell"
+                          :row="row"
+                          :column="col"
+                          :text="(row as any)[col.value]"
+                        >
+                          {{ (row as any)[col.value] }}
+                        </slot>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
                       <slot
                         name="cell"
                         :row="row"
@@ -318,50 +395,57 @@ const getCellClass = (col: Column) => {
                       >
                         {{ (row as any)[col.value] }}
                       </slot>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <slot
-                      name="cell"
-                      :row="row"
-                      :column="col"
-                      :text="(row as any)[col.value]"
-                    >
-                      {{ (row as any)[col.value] }}
-                    </slot>
-                  </TooltipContent>
-                </Tooltip>
-                <slot
-                  v-else
-                  name="cell"
-                  :row="row"
-                  :column="col"
-                  :text="(row as any)[col.value]"
-                >
-                  {{ (row as any)[col.value] }}
-                </slot>
-              </TableCell>
-              <TableCell
-                v-if="showColumnToggle"
-                class="sticky right-0 z-20 transition-shadow duration-300"
-                :class="{
-                  'bg-background': isScrollable,
-                  'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]':
-                    !firstRightFixedColumn && isScrollable,
-                }"
-              />
-            </TableRow>
+                    </TooltipContent>
+                  </Tooltip>
+                  <slot
+                    v-else
+                    name="cell"
+                    :row="row"
+                    :column="col"
+                    :text="(row as any)[col.value]"
+                  >
+                    {{ (row as any)[col.value] }}
+                  </slot>
+                </TableCell>
+                <TableCell
+                  v-if="showColumnToggle"
+                  class="sticky right-0 z-20 transition-shadow duration-300"
+                  :class="{
+                    'bg-background': isScrollable,
+                    'shadow-[-4px_0_8px_-2px_rgba(0,0,0,0.1)]':
+                      !firstRightFixedColumn && isScrollable,
+                  }"
+                />
+              </TableRow>
+              <TableRow
+                v-if="
+                  showExpandButton &&
+                  canExpandRow(row) &&
+                  isExpanded(row[rowKey])
+                "
+                class="bg-muted/30"
+              >
+                <template v-if="getRowExpandMode(row) === 'children'">
+                  <TableCell v-if="showExpandButton" />
+                  <TableCell v-if="showCheckbox" />
+                  <TableCell
+                    v-for="col in visibleColumns"
+                    :key="col.value"
+                    class="whitespace-nowrap py-2 px-4"
+                  >
+                    {{ (row as any)[col.children?.value as any] }}
+                  </TableCell>
+                  <TableCell v-if="showColumnToggle" />
+                </template>
+                <TableCell v-else :colspan="tableColspan" class="py-0">
+                  <slot name="expanded" :row="row" />
+                </TableCell>
+              </TableRow>
+            </template>
           </template>
           <template v-else>
             <TableRow>
-              <TableCell
-                :colspan="
-                  visibleColumns.length +
-                  (showCheckbox ? 1 : 0) +
-                  (showColumnToggle ? 1 : 0)
-                "
-                class="h-24 text-center"
-              >
+              <TableCell :colspan="tableColspan" class="h-24 text-center">
                 {{ $t("noResults") }}
               </TableCell>
             </TableRow>
