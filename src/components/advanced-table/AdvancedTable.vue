@@ -84,10 +84,10 @@ const pageSize = defineModel<number>("pageSize", { required: true });
 const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", { default: () => [] });
 
 const visibleColumns = computed(() => columns.value.filter((col) => col.show));
-const hasChildrenColumns = computed(() =>
-  columns.value.some((col) => Boolean(col.children)),
+const hasChildrenRows = computed(() =>
+  props.data.some((row) => Array.isArray((row as any).children) && (row as any).children.length > 0),
 );
-const useChildrenExpand = computed(() => hasChildrenColumns.value);
+const useChildrenExpand = computed(() => hasChildrenRows.value);
 const showExpandButton = computed(
   () => useChildrenExpand.value || props.showExpand || Boolean(props.rowExpandMode),
 );
@@ -130,7 +130,8 @@ const toggleOne = (id: RowKeyType, checked: boolean) => {
 const expandedIds = ref<RowKeyType[]>([]);
 const resolveExpandMode = (row: T) => {
   if (props.rowExpandMode) return props.rowExpandMode(row);
-  if (useChildrenExpand.value) return "children";
+  const children = (row as any).children;
+  if (Array.isArray(children) && children.length > 0) return "children";
   return props.showExpand ? "slot" : false;
 };
 const canExpandRow = (row: T) => {
@@ -417,32 +418,84 @@ const getCellClass = (col: Column) => {
                   }"
                 />
               </TableRow>
-              <TableRow
-                v-if="
-                  showExpandButton &&
-                  canExpandRow(row) &&
-                  isExpanded(row[rowKey])
-                "
-                class="bg-muted/30"
-              >
-                <template v-if="getRowExpandMode(row) === 'children'">
-                  <TableCell v-if="showExpandButton" />
-                  <TableCell v-if="showCheckbox" />
-                  <TableCell
-                    v-for="col in visibleColumns"
-                    :key="col.value"
-                    class="whitespace-nowrap py-2 px-4"
-                  >
-                    {{ (row as any)[col.children?.value as any] }}
-                  </TableCell>
-                  <TableCell v-if="showColumnToggle" />
+                <template
+                  v-if="
+                    showExpandButton &&
+                    canExpandRow(row) &&
+                    isExpanded(row[rowKey])
+                  "
+                >
+                  <template v-if="getRowExpandMode(row) === 'children'">
+                    <TableRow
+                      v-for="(child, childIndex) in (row as any).children"
+                      :key="`${row[rowKey]}-child-${childIndex}`"
+                      class="bg-muted/30"
+                    >
+                      <TableCell v-if="showExpandButton" />
+                      <TableCell v-if="showCheckbox" />
+                    <TableCell
+                      v-for="col in visibleColumns"
+                      :key="col.value"
+                      class="whitespace-nowrap py-2 px-4"
+                    >
+                      <Tooltip
+                        v-if="col.enableAutoTooltip !== false"
+                        :disabled="
+                          tooltipDisabled[`${child[rowKey]}-${col.value}`]
+                        "
+                      >
+                        <TooltipTrigger as-child>
+                          <div
+                            class="truncate min-w-0"
+                            @mouseenter="
+                              checkOverflow(
+                                $event,
+                                `${child[rowKey]}-${col.value}`
+                              )
+                            "
+                          >
+                            <slot
+                              name="cell"
+                              :row="child"
+                              :column="col"
+                              :text="(child as any)[col.value]"
+                            >
+                              {{ (child as any)[col.value] }}
+                            </slot>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <slot
+                            name="cell"
+                            :row="child"
+                            :column="col"
+                            :text="(child as any)[col.value]"
+                          >
+                            {{ (child as any)[col.value] }}
+                          </slot>
+                        </TooltipContent>
+                      </Tooltip>
+                      <slot
+                        v-else
+                        name="cell"
+                        :row="child"
+                        :column="col"
+                        :text="(child as any)[col.value]"
+                      >
+                        {{ (child as any)[col.value] }}
+                      </slot>
+                    </TableCell>
+                      <TableCell v-if="showColumnToggle" />
+                    </TableRow>
+                  </template>
+                  <TableRow v-else class="bg-muted/30">
+                    <TableCell :colspan="tableColspan" class="py-0">
+                      <slot name="expanded" :row="row" />
+                    </TableCell>
+                  </TableRow>
                 </template>
-                <TableCell v-else :colspan="tableColspan" class="py-0">
-                  <slot name="expanded" :row="row" />
-                </TableCell>
-              </TableRow>
+              </template>
             </template>
-          </template>
           <template v-else>
             <TableRow>
               <TableCell :colspan="tableColspan" class="h-24 text-center">

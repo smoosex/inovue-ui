@@ -1,6 +1,6 @@
 # Advanced Table
 
-`AdvancedTable` 是一个功能丰富的数据表格组件，支持列管理、分页、筛选、行选择、固定列、自动提示，以及行展开（子列/插槽/混合模式）。
+`AdvancedTable` 是一个功能丰富的数据表格组件，支持列管理、分页、筛选、行选择、固定列、自动提示，以及行展开（数据驱动/插槽/混合模式）。
 
 ## 快速开始
 
@@ -45,17 +45,30 @@ const total = ref(data.value.length);
 1. **子列展开（children）**
 2. **自定义插槽展开（expanded）**
 
-### 1. 子列展开（children）
+### 1. 数据驱动展开（row.children）
 
-当 `Column` 中存在 `children` 时，可以通过展开按钮展示子列内容。子列内容使用父列标题，但显示子列 `value` 对应的字段。
+当行数据中存在 `children` 时，会显示展开按钮，展开后按父列定义渲染子行内容。
 
 ```ts
-const columns = reactive<Column[]>([
-  { label: "ID", value: "id", show: true, children: { label: "ID", value: "lastLogin", show: true } },
-  { label: "姓名", value: "name", show: true, children: { label: "姓名", value: "role", show: true } },
-  { label: "邮箱", value: "email", show: true, children: { label: "邮箱", value: "status", show: true } },
-  { label: "角色", value: "role", show: true },
-  { label: "状态", value: "status", show: true },
+type Row = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  children?: Row[];
+};
+
+const data = ref<Row[]>([
+  {
+    id: "USR-1",
+    name: "Amy Parker",
+    email: "amy@example.com",
+    role: "管理员",
+    children: [
+      { id: "USR-1-A", name: "Amy 子行 A", email: "amy.a@example.com", role: "管理员" },
+      { id: "USR-1-B", name: "Amy 子行 B", email: "amy.b@example.com", role: "管理员" },
+    ],
+  },
 ]);
 ```
 
@@ -92,6 +105,7 @@ type Row = {
   email: string;
   role: string;
   expandMode: "children" | "slot" | false;
+  children?: Row[];
   logs?: { time: string; action: string; by: string }[];
 };
 
@@ -121,7 +135,7 @@ const rowExpandMode = (row: Row) => row.expandMode;
 
 混合模式下的优先级：
 1. 若 `rowExpandMode` 存在，按行返回的结果决定展开方式
-2. 否则若存在 `children` 则使用子列展开
+2. 否则若行数据存在 `children` 则使用数据驱动展开
 3. 否则若 `showExpand=true` 则使用插槽展开
 
 ### 4. 控制某些行不可展开
@@ -177,7 +191,6 @@ type Column = {
   label: string;
   value: string;
   show: boolean;
-  children?: Column; // 子列配置
   originalIndex?: number;
   hideInSetting?: boolean;
   width?: string;

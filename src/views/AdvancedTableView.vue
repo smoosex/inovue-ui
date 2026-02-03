@@ -29,21 +29,18 @@ const columns = reactive<Column[]>([
     show: true,
     originalIndex: 0,
     width: "80px",
-    children: { label: "ID", value: "lastLogin", show: true },
   },
   {
     label: "姓名",
     value: "name",
     show: true,
     originalIndex: 1,
-    children: { label: "姓名", value: "role", show: true },
   },
   {
     label: "邮箱",
     value: "email",
     show: true,
     originalIndex: 2,
-    children: { label: "邮箱", value: "status", show: true },
   },
   {
     label: "角色",
@@ -68,12 +65,36 @@ const columns = reactive<Column[]>([
 type MixedRow = User & {
   expandMode: "children" | "slot" | false;
   logs?: { time: string; action: string; by: string }[];
+  children?: User[];
 };
 
 const mixedRows = computed<MixedRow[]>(() =>
   mockData.value.map((row, index) => {
     const mode =
       index % 3 === 0 ? "children" : index % 3 === 1 ? "slot" : false;
+    const children =
+      mode === "children"
+        ? [
+            {
+              ...row,
+              id: `${row.id}-A`,
+              name: `${row.name} (子行 A)`,
+              email: row.email,
+              role: row.role,
+              status: row.status,
+              lastLogin: row.lastLogin,
+            },
+            {
+              ...row,
+              id: `${row.id}-B`,
+              name: `${row.name} (子行 B)`,
+              email: row.email,
+              role: row.role,
+              status: row.status,
+              lastLogin: row.lastLogin,
+            },
+          ]
+        : [];
     const logs =
       mode === "slot"
         ? [
@@ -89,11 +110,12 @@ const mixedRows = computed<MixedRow[]>(() =>
             },
           ]
         : [];
-    return { ...row, expandMode: mode, logs };
+    return { ...row, expandMode: mode, logs, children };
   }),
 );
 
-const expandModeForRow = (row: MixedRow) => row.expandMode;
+const expandModeForRow = (row: MixedRow) =>
+  row.expandMode ? row.expandMode : row.children?.length ? "children" : false;
 
 const filterOptions: FilterOption[] = [
   { label: "姓名", value: "name", type: "text", placeholder: "请输入姓名" },
