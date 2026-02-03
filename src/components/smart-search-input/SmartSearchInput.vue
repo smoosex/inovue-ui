@@ -199,7 +199,6 @@ const handleSearch = () => {
       :current-page="currentOption?.currentPage"
       :page-size="currentOption?.pageSize"
       :loading="currentOption?.loading"
-      :has-more="currentOption?.hasMore"
       :level1-label="currentOption?.level1Label"
       :level2-label="currentOption?.level2Label"
       :load-children="currentOption?.loadChildren"

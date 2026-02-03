@@ -117,8 +117,7 @@ const handleRemoveFilter = (key: string) => {
 | 事件 | 参数 | 说明 |
 |------|------|------|
 | `search` | `FilterValue` | 点击搜索按钮或触发搜索时 |
-| `loadMore` | `filterKey: string` | 加载更多时触发 |
-| `loadChildren` | `parentId: string` | 级联选择加载子项时触发 |
+| `loadChildren` | `parentId: string` | 级联选择加载子项时触发（兜底事件，仅当未提供 `loadChildren` 回调时） |
 
 ---
 
@@ -185,7 +184,7 @@ type FilterOption = {
   // 回调函数
   loadOptions?: () => Promise<void>;              // 懒加载选项
   loadMore?: () => Promise<void>;                 // 加载更多
-  loadChildren?: (parentId: string) => Promise<SelectOption[]>; // 加载子项
+  loadChildren?: (parentId: string) => Promise<SelectOption[]>; // 加载子项（推荐方式）
 
   // 值格式化
   formatValue?: (value: any) => any;              // 格式化输出值
@@ -535,6 +534,8 @@ const filterOptions: FilterOption[] = [
 ];
 ```
 
+> 兜底事件说明：如果不提供 `FilterOption.loadChildren`，组件会触发 `SmartSearchInput` 的 `loadChildren` 事件，但此事件不会自动写回选项，需要你自行处理并更新 `options`。
+
 ---
 
 ## 分页加载
@@ -549,12 +550,13 @@ const filterOptions: FilterOption[] = [
 | `total` | `number` | 数据总数 |
 | `currentPage` | `number` | 当前页码（默认 1） |
 | `pageSize` | `number` | 每页数量（默认 20） |
-| `loadOptions` | `() => Promise<void>` | 首次加载回调，切换到该筛选项时触发 |
+| `loadOptions` | `() => Promise<void>` | 首次加载回调，切换到该筛选项时触发（初始选中项也会触发） |
 | `loadMore` | `() => Promise<void>` | 加载更多回调，滚动到底部时自动触发 |
 
 ### hasMore 计算
 
 组件内部根据 `currentPage * pageSize < total` 自动计算是否还有更多数据。
+组件不支持手动传入 `hasMore`。
 
 ### 完整示例
 
