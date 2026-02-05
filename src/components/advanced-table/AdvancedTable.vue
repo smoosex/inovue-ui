@@ -98,6 +98,9 @@ const tableColspan = computed(
     (props.showColumnToggle ? 1 : 0) +
     (showExpandButton.value ? 1 : 0),
 );
+const rightStickyOffset = computed(() =>
+  props.showColumnToggle ? "56px" : "0px",
+);
 
 const allSelected = computed(() => {
   return (
@@ -208,7 +211,7 @@ const getStickyStyle = (col: Column, isHeader: boolean = false) => {
   if (col.fixed === "right") {
     return {
       position: "sticky",
-      right: "56px",
+      right: rightStickyOffset.value,
       zIndex,
       width: resolvedWidth,
       maxWidth: hasWidth ? resolvedWidth : undefined,
@@ -441,7 +444,9 @@ const getCellClass = (col: Column) => {
                       <Tooltip
                         v-if="col.enableAutoTooltip !== false"
                         :disabled="
-                          tooltipDisabled[`${child[rowKey]}-${col.value}`]
+                          tooltipDisabled[
+                            `${row[rowKey]}-child-${childIndex}-${col.value}`
+                          ]
                         "
                       >
                         <TooltipTrigger as-child>
@@ -450,7 +455,7 @@ const getCellClass = (col: Column) => {
                             @mouseenter="
                               checkOverflow(
                                 $event,
-                                `${child[rowKey]}-${col.value}`
+                                `${row[rowKey]}-child-${childIndex}-${col.value}`
                               )
                             "
                           >

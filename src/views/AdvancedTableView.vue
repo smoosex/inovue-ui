@@ -47,12 +47,15 @@ const columns = reactive<Column[]>([
     value: "role",
     show: true,
     originalIndex: 3,
+    width: "120px",
   },
   {
     label: "状态",
     value: "status",
     show: true,
     originalIndex: 4,
+    width: "100px",
+    fixed: "right",
   },
   {
     label: "最后登录",

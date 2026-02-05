@@ -18,6 +18,11 @@ const dateTimeRange = ref<DateTimeRange>({
   to: new Date(),
 });
 
+const dateTimeRangeEmpty = ref<DateTimeRange>({
+  from: undefined,
+  to: undefined,
+});
+
 const dateRange = ref<DateRange>({
   from: new Date(),
   to: new Date(),
@@ -41,10 +46,19 @@ const handleSearch = () => {
       <Button variant="outline" size="sm" @click="handleSearch"> 提交 </Button>
     </div>
 
-    <div class="flex-1 overflow-auto space-y-8 mt-4">
+  <div class="flex-1 overflow-auto space-y-8 mt-4">
+      <!-- Empty DateTimeRangePicker (i18n placeholder) -->
+      <div class="space-y-2">
+        <h2 class="text-lg font-semibold">空值占位（验证 i18n）</h2>
+        <DateTimeRangePicker
+          v-model="dateTimeRangeEmpty"
+          :locale="locale === 'en' ? 'en' : 'zhHans'"
+        />
+      </div>
+
       <!-- DateTimeRangePicker -->
       <div class="space-y-2">
-        <h2 class="text-lg font-semibold">日期时间范围选择器</h2>
+        <h2 class="text-lg font-semibold">日期时间范围选择器（取消回滚）</h2>
         <DateTimeRangePicker
           v-model="dateTimeRange"
           :locale="locale === 'en' ? 'en' : 'zhHans'"
@@ -69,6 +83,7 @@ const handleSearch = () => {
       <!-- 选中值展示 -->
       <div class="p-4 border rounded-lg bg-muted/20 space-y-2">
         <h3 class="font-semibold">当前选中值：</h3>
+        <p class="text-sm">空值占位: {{ dateTimeRangeEmpty }}</p>
         <p class="text-sm">日期时间范围: {{ dateTimeRange }}</p>
         <p class="text-sm">日期范围: {{ dateRange }}</p>
         <p class="text-sm">时间: {{ time }}</p>

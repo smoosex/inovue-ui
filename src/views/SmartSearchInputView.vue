@@ -84,6 +84,16 @@ const filterOptions = reactive<FilterOption[]>([
     ],
   },
   {
+    label: "优先级(含0)",
+    value: "priority",
+    type: "select",
+    options: [
+      { label: "0 - 低", value: 0 },
+      { label: "1 - 中", value: 1 },
+      { label: "2 - 高", value: 2 },
+    ],
+  },
+  {
     label: "角色",
     value: "roles",
     type: "multi-select",
@@ -91,6 +101,29 @@ const filterOptions = reactive<FilterOption[]>([
       { label: "管理员", value: "admin" },
       { label: "编辑", value: "editor" },
       { label: "查看", value: "viewer" },
+    ],
+  },
+  {
+    label: "部门",
+    value: "departments",
+    type: "tree-multi-select",
+    options: [
+      {
+        label: "技术部",
+        value: "tech",
+        children: [
+          { label: "前端组", value: "frontend" },
+          { label: "后端组", value: "backend" },
+        ],
+      },
+      {
+        label: "产品部",
+        value: "product",
+        children: [
+          { label: "产品设计", value: "pd" },
+          { label: "UI设计", value: "ui" },
+        ],
+      },
     ],
   },
   {

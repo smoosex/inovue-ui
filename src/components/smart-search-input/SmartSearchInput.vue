@@ -7,6 +7,7 @@ import type {
   FilterInputType,
   AnyFilterValue,
   ActiveFilterItem,
+  SelectOption,
 } from "./types";
 import { GetI18nText, type Locale } from "./locales";
 import FilterInput from "./FilterInput.vue";
@@ -61,6 +62,29 @@ const resolveComponent = (type?: FilterInputType) => {
   }
 };
 
+const flattenOptions = (options?: SelectOption[]) => {
+  const result: SelectOption[] = [];
+  const walk = (opts?: SelectOption[]) => {
+    if (!opts) return;
+    opts.forEach((opt) => {
+      result.push(opt);
+      if (opt.children?.length) {
+        walk(opt.children);
+      }
+    });
+  };
+  walk(options);
+  return result;
+};
+
+const getOptionLabelMap = (options?: SelectOption[]) => {
+  const map = new Map<string, string>();
+  flattenOptions(options).forEach((opt) => {
+    map.set(String(opt.value), opt.label);
+  });
+  return map;
+};
+
 // Default value factories using Strategy Pattern
 const defaultValueFactories: Record<FilterInputType, () => AnyFilterValue> = {
   text: () => "",
@@ -81,6 +105,12 @@ const currentValue = ref<AnyFilterValue>(
   getDefaultValue(props.options[0]?.type),
 );
 
+const loadOptionsState = ref({
+  key: "",
+  seq: 0,
+  inFlight: false,
+});
+
 // Reset value and lazy load options when key changes
 watch(
   selectedKey,
@@ -90,7 +120,20 @@ watch(
 
     // Lazy load options if available
     if (currentOption.value?.loadOptions) {
-      await currentOption.value.loadOptions();
+      const key = selectedKey.value;
+      if (loadOptionsState.value.inFlight && loadOptionsState.value.key === key) {
+        return;
+      }
+      const seq = (loadOptionsState.value.seq += 1);
+      loadOptionsState.value.key = key;
+      loadOptionsState.value.inFlight = true;
+      try {
+        await currentOption.value.loadOptions();
+      } finally {
+        if (loadOptionsState.value.seq === seq) {
+          loadOptionsState.value.inFlight = false;
+        }
+      }
     }
   },
   { immediate: true },
@@ -118,10 +161,9 @@ const formatFilterValue = (
     case "multi-select":
     case "tree-multi-select": {
       if (!Array.isArray(value) || value.length === 0) return "";
-      const labels = currentOption.value?.options
-        ?.filter((opt) => value.includes(opt.value))
-        .map((opt) => opt.label);
-      return labels?.join(", ") || value.map(String).join(", ");
+      const map = getOptionLabelMap(currentOption.value?.options);
+      const labels = value.map((val) => map.get(String(val)) || String(val));
+      return labels.join(", ");
     }
     case "select": {
       const label = currentOption.value?.options?.find(

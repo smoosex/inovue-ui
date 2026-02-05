@@ -85,7 +85,7 @@ const handleLevel1Click = async (option: SelectOption) => {
     level2Options.value = option.children;
   } else {
     // Load children
-    const parentId = String(option.id);
+    const parentId = String(option.id ?? option.value);
     loadingLevel2.value = true;
 
     if (props.loadChildren) {

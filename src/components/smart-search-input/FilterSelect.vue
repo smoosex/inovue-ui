@@ -42,7 +42,7 @@ const emit = defineEmits<{
 
 // Auto-trigger search on change
 const handleChange = (val: any) => {
-  modelValue.value = val || "";
+  modelValue.value = val ?? "";
   emit("search");
 };
 
@@ -85,7 +85,7 @@ useIntersectionObserver(
 
 <template>
   <Select
-    :model-value="String(modelValue || '')"
+    :model-value="String(modelValue ?? '')"
     @update:model-value="handleChange"
   >
     <SelectTrigger :class="triggerClass">

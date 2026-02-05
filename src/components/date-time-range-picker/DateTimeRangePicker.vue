@@ -89,7 +89,7 @@ const formatDateTime = (
 ): { date: string; time: string; hasDate: boolean } => {
   if (!date || !isValid(date)) {
     return {
-      date: "Select date",
+      date: $t("selectDate"),
       time: "",
       hasDate: false,
     };
@@ -203,17 +203,6 @@ const checkPreset = () => {
   selectedPreset.value = undefined;
 };
 
-const resetValues = () => {
-  const fromDate = getDateAdjustedForTimezone(props.initialDateFrom);
-  const toDate = getDateAdjustedForTimezone(props.initialDateTo);
-  range.value = { from: fromDate, to: toDate };
-  selectedPreset.value = undefined;
-  calendarRange.value = {
-    start: fromDate ? dateToDateValue(fromDate) : dateToDateValue(new Date()),
-    end: toDate ? dateToDateValue(toDate) : undefined,
-  };
-};
-
 const areRangesEqual = (a?: DateTimeRange, b?: DateTimeRange): boolean => {
   if (!a || !b) return a === b;
   return (
@@ -242,7 +231,7 @@ const handleToDateTimeChange = (date: Date | undefined) => {
 
 const handleCancel = () => {
   isOpen.value = false;
-  resetValues();
+  range.value = { ...openedRange.value };
 };
 
 const handleUpdate = () => {
