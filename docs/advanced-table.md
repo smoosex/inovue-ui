@@ -161,6 +161,7 @@ const rowExpandMode = (row: Row) => row.expandMode;
 - `showExpand?: boolean` 是否启用插槽展开（默认 `false`）
 - `rowExpandable?: (row: T) => boolean` 控制某行是否可展开
 - `rowExpandMode?: (row: T) => "children" | "slot" | false` 混合模式展开策略
+- `showPagination?: boolean` 是否显示分页（默认 `true`）
 - `loading?: boolean` 加载状态
 - `rowKey?: string` 行主键字段（默认 `id`）
 - `locale?: "en" | "zhHans"` 语言（默认 `en`）

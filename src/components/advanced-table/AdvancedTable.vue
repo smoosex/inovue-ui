@@ -40,6 +40,7 @@ type Props = {
   showExpand?: boolean;
   rowExpandable?: (row: T) => boolean;
   rowExpandMode?: (row: T) => "children" | "slot" | false;
+  showPagination?: boolean;
   loading?: boolean;
   rowKey?: string;
   locale?: Locale;
@@ -56,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true,
   showColumnToggle: true,
   showExpand: false,
+  showPagination: true,
   loading: false,
   rowKey: "id",
   locale: "en",
@@ -514,6 +516,7 @@ const getCellClass = (col: Column) => {
 
     <!-- Pagination Area -->
     <TablePagination
+      v-if="showPagination"
       v-model:pageNum="pageNum"
       v-model:page-size="pageSize"
       :total="total"

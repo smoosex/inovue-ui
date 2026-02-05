@@ -18,6 +18,7 @@ const pageSize = ref(10);
 const total = ref(0);
 const selectedIds = ref<string[]>([]);
 const showColumnToggle = ref(true);
+const showPagination = ref(true);
 const loading = ref(false);
 
 const activeFilters = ref<{ key: string; label: string; value: any; displayValue: string }[]>([]);
@@ -197,6 +198,16 @@ const secondaryActions: ToolbarAction[] = [
     },
   },
   {
+    key: "pagination-toggle",
+    label: computed(() =>
+      showPagination.value ? "隐藏分页" : "显示分页",
+    ).value,
+    variant: "outline",
+    onClick: () => {
+      showPagination.value = !showPagination.value;
+    },
+  },
+  {
     key: "refresh",
     label: "刷新",
     variant: "outline",
@@ -228,7 +239,7 @@ onMounted(() => {
 <template>
   <div class="flex flex-col flex-1 h-full space-y-2 overflow-hidden px-4 py-2">
     <div class="text-sm font-semibold text-muted-foreground">
-      混合模式（同一表格：子列展开 + 插槽展开 + 不可展开）
+      混合模式（可切换分页）
     </div>
     <div class="flex-1 overflow-hidden rounded-md flex flex-col">
       <AdvancedTable
@@ -249,6 +260,7 @@ onMounted(() => {
         :show-active-filters="true"
         :row-expand-mode="expandModeForRow"
         :show-expand="true"
+        :show-pagination="showPagination"
         :locale="tableLocale"
         class="flex-1 min-h-0 h-[520px]"
         @search="handleSearch"
