@@ -19,7 +19,10 @@ defineProps<{
       />
     </div>
 
-    <div class="flex-1 flex justify-end px-4">
+    <div
+      class="flex-1 flex justify-end pl-4"
+      :class="secondaryActions?.length ? 'pr-4' : 'pr-0'"
+    >
       <slot />
     </div>
 
