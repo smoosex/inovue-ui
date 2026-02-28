@@ -4,7 +4,7 @@ import ColumnToggle from "./ColumnToggle.vue";
 import TablePagination from "./TablePagination.vue";
 import type { Column, Locale, RowKeyType } from "./types";
 import { GetI18nText } from "./locales";
-import { useResizeObserver } from "@vueuse/core";
+import { useResizeObserver, useMediaQuery } from "@vueuse/core";
 import { ChevronDown, ChevronRight } from "lucide-vue-next";
 import {
   Tooltip,
@@ -86,6 +86,10 @@ const pageSize = defineModel<number>("pageSize", { required: true });
 const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", { default: () => [] });
 
 const visibleColumns = computed(() => columns.value.filter((col) => col.show));
+const isLgScreen = useMediaQuery("(min-width: 1024px)");
+const showColumnToggleCell = computed(
+  () => props.showColumnToggle && isLgScreen.value,
+);
 const hasChildrenRows = computed(() =>
   props.data.some((row) => Array.isArray((row as any).children) && (row as any).children.length > 0),
 );
@@ -97,11 +101,11 @@ const tableColspan = computed(
   () =>
     visibleColumns.value.length +
     (props.showCheckbox ? 1 : 0) +
-    (props.showColumnToggle ? 1 : 0) +
+    (showColumnToggleCell.value ? 1 : 0) +
     (showExpandButton.value ? 1 : 0),
 );
 const rightStickyOffset = computed(() =>
-  props.showColumnToggle ? "56px" : "0px",
+  showColumnToggleCell.value ? "56px" : "0px",
 );
 
 const allSelected = computed(() => {
@@ -312,7 +316,7 @@ const getCellClass = (col: Column) => {
               {{ col.label }}
             </TableHead>
             <TableHead
-              v-if="showColumnToggle"
+              v-if="showColumnToggleCell"
               class="w-12.5 text-right sticky right-0 z-20 transition-shadow duration-300"
               :class="{
                 'bg-muted': isScrollable,
@@ -414,7 +418,7 @@ const getCellClass = (col: Column) => {
                   </slot>
                 </TableCell>
                 <TableCell
-                  v-if="showColumnToggle"
+                  v-if="showColumnToggleCell"
                   class="sticky right-0 z-20 transition-shadow duration-300"
                   :class="{
                     'bg-background': isScrollable,
@@ -492,7 +496,7 @@ const getCellClass = (col: Column) => {
                         {{ (child as any)[col.value] }}
                       </slot>
                     </TableCell>
-                      <TableCell v-if="showColumnToggle" />
+                      <TableCell v-if="showColumnToggleCell" />
                     </TableRow>
                   </template>
                   <TableRow v-else class="bg-muted/30">
