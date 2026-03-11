@@ -45,22 +45,26 @@ const installComponents = computed(() => [
   {
     key: "advanced-table",
     label: t("menu.components.dataDisplay.advancedTable"),
-    packageName: "advanced-table",
+    registryUrl:
+      "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/advanced-table.json",
   },
   {
     key: "smart-search-input",
     label: t("menu.components.input.smartSearchInput"),
-    packageName: "smart-search-input",
+    registryUrl:
+      "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/smart-search-input.json",
   },
   {
     key: "date-time-range-picker",
     label: t("menu.components.input.dateTimeRangePicker"),
-    packageName: "date-time-range-picker",
+    registryUrl:
+      "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/date-time-range-picker.json",
   },
   {
     key: "toolbar",
     label: t("menu.components.navigation.advancedToolbar"),
-    packageName: "toolbar",
+    registryUrl:
+      "https://raw.githubusercontent.com/smoosex/inovue-ui/refs/heads/main/public/r/toolbar.json",
   },
 ]);
 
@@ -73,8 +77,8 @@ const commandPrefixes: Record<"pnpm" | "npm" | "yarn" | "bun", string> = {
 
 const getInstallCommand = (
   manager: "pnpm" | "npm" | "yarn" | "bun",
-  packageName: string,
-) => `${commandPrefixes[manager]} ${packageName}`;
+  registryUrl: string,
+) => `${commandPrefixes[manager]} ${registryUrl}`;
 
 const handleCopyCommand = async (commandKey: string, command: string) => {
   await navigator.clipboard.writeText(command);
@@ -236,13 +240,13 @@ const handleCopyCommand = async (commandKey: string, command: string) => {
                   </div>
                   <div class="glass-code flex items-center justify-between gap-3 rounded-xl px-3 py-3">
                     <code class="hero-command-scroll min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs leading-6 text-foreground">
-                      {{ getInstallCommand(manager as 'pnpm' | 'npm' | 'yarn' | 'bun', item.packageName) }}
+                      {{ getInstallCommand(manager as 'pnpm' | 'npm' | 'yarn' | 'bun', item.registryUrl) }}
                     </code>
                     <Button
                       size="icon"
                       variant="ghost"
                       class="shrink-0 rounded-xl"
-                      @click="handleCopyCommand(`${manager}-${item.key}`, getInstallCommand(manager as 'pnpm' | 'npm' | 'yarn' | 'bun', item.packageName))"
+                      @click="handleCopyCommand(`${manager}-${item.key}`, getInstallCommand(manager as 'pnpm' | 'npm' | 'yarn' | 'bun', item.registryUrl))"
                     >
                       <Check
                         v-if="copiedCommandKey === `${manager}-${item.key}`"
