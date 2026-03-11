@@ -6,7 +6,7 @@
 
 ```vue
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref } from "vue";
 import { AdvancedTable } from "@/components/advanced-table";
 import type { Column } from "@/components/advanced-table";
 
@@ -15,7 +15,7 @@ const data = ref([
   { id: "USR-2", name: "Ken Williams", email: "ken@example.com", role: "编辑" },
 ]);
 
-const columns = reactive<Column[]>([
+const columns = ref<Column[]>([
   { label: "ID", value: "id", show: true, originalIndex: 0 },
   { label: "姓名", value: "name", show: true, originalIndex: 1 },
   { label: "邮箱", value: "email", show: true, originalIndex: 2 },
