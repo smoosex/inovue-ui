@@ -11,6 +11,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { GetI18nText, type Locale } from "./locales";
 
 const attrs = useAttrs();
 
@@ -26,12 +27,16 @@ const props = withDefaults(
     total?: number;
     currentPage?: number;
     pageSize?: number;
+    locale?: Locale;
   }>(),
   {
     currentPage: 1,
     pageSize: 20,
   }
 );
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const modelValue = defineModel<string | number>();
 
@@ -89,9 +94,7 @@ useIntersectionObserver(
     @update:model-value="handleChange"
   >
     <SelectTrigger :class="triggerClass">
-      <SelectValue
-        :placeholder="placeholder || 'Select'"
-      />
+      <SelectValue :placeholder="placeholder || $t('select')" />
     </SelectTrigger>
     <SelectContent>
       <template v-if="options && options.length > 0">
@@ -124,7 +127,7 @@ useIntersectionObserver(
         class="flex items-center justify-center py-2 text-xs text-muted-foreground"
       >
         <Loader2 v-if="loading" class="h-3 w-3 animate-spin mr-2" />
-        <span>{{ loading ? 'Loading...' : 'Load more' }}</span>
+        <span>{{ loading ? $t("loading") : $t("loadMore") }}</span>
       </div>
     </SelectContent>
   </Select>

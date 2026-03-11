@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { cn } from "@/lib/utils";
 import DateInput from "./DateInput.vue";
 import TimeInput from "./TimeInput.vue";
+import type { Locale } from "./locales";
 
 const modelValue = defineModel<Date>();
 
@@ -11,6 +12,7 @@ const props = withDefaults(
     disabled?: boolean;
     class?: string;
     label?: string;
+    locale?: Locale;
   }>(),
   {
     disabled: false,
@@ -68,11 +70,13 @@ const handleTimeChange = (newTime: Date | undefined) => {
       <DateInput
         :model-value="date"
         :disabled="disabled"
+        :locale="props.locale"
         @update:model-value="handleDateChange"
       />
       <TimeInput
         :model-value="date"
         :disabled="disabled"
+        :locale="props.locale"
         @update:model-value="handleTimeChange"
       />
     </div>

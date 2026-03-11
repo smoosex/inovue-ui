@@ -36,6 +36,7 @@ type Props = {
   data: T[];
   total: number;
   showCheckbox?: boolean;
+  rowSelectable?: (row: T) => boolean;
   showColumnToggle?: boolean;
   showExpand?: boolean;
   rowExpandable?: (row: T) => boolean;
@@ -108,16 +109,27 @@ const rightStickyOffset = computed(() =>
   showColumnToggleCell.value ? "56px" : "0px",
 );
 
+const isRowSelectable = (row: T) =>
+  props.rowSelectable ? props.rowSelectable(row) : true;
+
+const selectableRows = computed(() =>
+  props.data.filter((row) => isRowSelectable(row)),
+);
+
+const selectableRowIds = computed(() =>
+  selectableRows.value.map((row) => row[props.rowKey] as RowKeyType),
+);
+
 const allSelected = computed(() => {
   return (
-    props.data.length > 0 &&
-    props.data.every((item) => selectedIds.value.includes(item[props.rowKey]))
+    selectableRowIds.value.length > 0 &&
+    selectableRowIds.value.every((id) => selectedIds.value.includes(id))
   );
 });
 
 const toggleAll = (checked: boolean) => {
   if (checked) {
-    selectedIds.value = props.data.map((item) => item[props.rowKey]);
+    selectedIds.value = [...selectableRowIds.value];
   } else {
     selectedIds.value = [];
   }
@@ -126,6 +138,7 @@ const toggleAll = (checked: boolean) => {
 const toggleOne = (id: RowKeyType, checked: boolean) => {
   const newSelected = [...selectedIds.value];
   if (checked) {
+    if (newSelected.includes(id)) return;
     newSelected.push(id);
   } else {
     const index = newSelected.indexOf(id);
@@ -194,6 +207,17 @@ watch(
     nextTick(checkScrollable);
   },
   { deep: true },
+);
+
+watch(
+  selectableRowIds,
+  (nextSelectableRowIds) => {
+    const selectableIdSet = new Set(nextSelectableRowIds);
+    selectedIds.value = selectedIds.value.filter((id) =>
+      selectableIdSet.has(id),
+    );
+  },
+  { immediate: true },
 );
 
 onMounted(() => {
@@ -295,6 +319,7 @@ const getCellClass = (col: Column) => {
               <Checkbox
                 id="select-all"
                 :model-value="allSelected"
+                :disabled="selectableRowIds.length === 0"
                 @update:model-value="(v) => toggleAll(v as boolean)"
               />
             </TableHead>
@@ -352,6 +377,7 @@ const getCellClass = (col: Column) => {
                   <Checkbox
                     :id="'select-' + row[rowKey]"
                     :model-value="selectedIds.includes(row[rowKey])"
+                    :disabled="!isRowSelectable(row)"
                     @update:model-value="
                       (val) => toggleOne(row[rowKey], val as boolean)
                     "

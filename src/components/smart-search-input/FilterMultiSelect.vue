@@ -20,6 +20,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useVirtualList, useIntersectionObserver } from "@vueuse/core";
+import { GetI18nText, type Locale } from "./locales";
 
 const attrs = useAttrs();
 
@@ -36,12 +37,16 @@ const props = withDefaults(
     total?: number;
     currentPage?: number;
     pageSize?: number;
+    locale?: Locale;
   }>(),
   {
     currentPage: 1,
     pageSize: 20,
   }
 );
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const modelValue = defineModel<(string | number)[]>("modelValue", {
   default: () => [],
@@ -129,7 +134,7 @@ const triggerClass = computed(() =>
         :id="id"
       >
         <span v-if="modelValue.length === 0" class="text-muted-foreground">
-          {{ placeholder || "Select" }}
+          {{ placeholder || $t("select") }}
         </span>
         <div
           v-else-if="selectedLabels.length <= 3"
@@ -149,7 +154,7 @@ const triggerClass = computed(() =>
           variant="secondary"
           class="rounded-sm px-1.5 py-0 text-xs font-normal"
         >
-          {{ selectedLabels.length }} selected
+          {{ selectedLabels.length }} {{ $t("selected") }}
         </Badge>
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
       </Button>
@@ -158,7 +163,7 @@ const triggerClass = computed(() =>
       <Command v-if="open">
         <CommandInput :placeholder="placeholder" :id="id" />
         <CommandList>
-          <CommandEmpty>No results</CommandEmpty>
+          <CommandEmpty>{{ $t("noResults") }}</CommandEmpty>
           <CommandGroup>
             <template v-if="options && options.length > 0">
               <div v-if="shouldUseVirtual" v-bind="containerProps" class="h-64 overflow-auto">
@@ -212,7 +217,7 @@ const triggerClass = computed(() =>
               class="flex items-center justify-center py-2 text-xs text-muted-foreground"
             >
               <Loader2 v-if="loading" class="h-3 w-3 animate-spin mr-2" />
-              <span>{{ loading ? 'Loading...' : 'Load more' }}</span>
+              <span>{{ loading ? $t("loading") : $t("loadMore") }}</span>
             </div>
           </CommandGroup>
           <template v-if="modelValue.length > 0">
@@ -223,7 +228,7 @@ const triggerClass = computed(() =>
                 class="justify-center text-center"
                 @select="handleClear"
               >
-                Clear filters
+                {{ $t("clearFilters") }}
               </CommandItem>
             </CommandGroup>
           </template>

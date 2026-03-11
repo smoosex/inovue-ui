@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { GetI18nText, type Locale } from "./locales";
 
 const attrs = useAttrs();
 
@@ -25,6 +26,7 @@ const props = defineProps<{
   level1Label?: string;
   level2Label?: string;
   loadChildren?: (parentId: string) => Promise<SelectOption[]>;
+  locale?: Locale;
 }>();
 
 const modelValue = defineModel<CascadeValue>("modelValue", {
@@ -39,6 +41,9 @@ const open = ref(false);
 const activeLevel1 = ref<SelectOption | null>(null);
 const level2Options = ref<SelectOption[]>([]);
 const loadingLevel2 = ref(false);
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 // Display text for trigger
 const displayText = computed(() => {
@@ -139,7 +144,7 @@ const triggerClass = computed(() =>
         :id="id"
       >
         <span v-if="!displayText" class="text-muted-foreground truncate">
-          {{ placeholder || "Select" }}
+          {{ placeholder || $t("select") }}
         </span>
         <Badge
           v-else
@@ -192,9 +197,7 @@ const triggerClass = computed(() =>
               v-if="loadingLevel2"
               class="flex items-center justify-center h-20"
             >
-              <span class="text-sm text-muted-foreground">{{
-                "Loading"
-              }}</span>
+              <span class="text-sm text-muted-foreground">{{ $t("loading") }}</span>
             </div>
             <template v-else-if="level2Options.length > 0">
               <div
@@ -213,8 +216,8 @@ const triggerClass = computed(() =>
               <span class="text-sm text-muted-foreground">
                 {{
                   activeLevel1
-                    ? "No data"
-                    : "Select level 1 first"
+                    ? $t("noData")
+                    : $t("selectLevel1First")
                 }}
               </span>
             </div>

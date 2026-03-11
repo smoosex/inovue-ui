@@ -152,11 +152,37 @@ const rowExpandMode = (row: Row) => row.expandMode;
 />
 ```
 
+## 行选择
+
+### 控制某些行不可选
+
+使用 `rowSelectable` 按行控制复选框是否可用：
+
+```vue
+<AdvancedTable
+  v-model:selected-ids="selectedIds"
+  v-model:columns="columns"
+  v-model:page-num="pageNum"
+  v-model:page-size="pageSize"
+  :data="data"
+  :total="total"
+  :row-selectable="(row) => row.status === '启用'"
+/>
+```
+
+### 选择行为说明
+
+1. 表头全选只会选中当前页中“可选”的行
+2. 不可选行的复选框会禁用
+3. 当表格数据变化时，`selectedIds` 会自动裁剪为当前数据中仍然可选的行
+4. 组件不保留跨页选中状态
+
 ## Props
 
 - `data: T[]` 表格数据
 - `total: number` 总条数
 - `showCheckbox?: boolean` 是否显示选择框（默认 `true`）
+- `rowSelectable?: (row: T) => boolean` 控制某行是否可选择
 - `showColumnToggle?: boolean` 是否显示列设置（默认 `true`）
 - `showExpand?: boolean` 是否启用插槽展开（默认 `false`）
 - `rowExpandable?: (row: T) => boolean` 控制某行是否可展开

@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/command";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { GetI18nText, type Locale } from "./locales";
 
 const attrs = useAttrs();
 
@@ -32,7 +33,11 @@ const props = defineProps<{
   options?: SelectOption[];
   placeholder?: string;
   id?: string;
+  locale?: Locale;
 }>();
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const modelValue = defineModel<(string | number)[]>("modelValue", {
   default: () => [],
@@ -134,7 +139,7 @@ const triggerClass = computed(() =>
           <span
             v-if="modelValue.length === 0"
             class="text-muted-foreground truncate"
-            >{{ placeholder || "Select" }}</span
+            >{{ placeholder || $t("select") }}</span
           >
           <template v-else-if="modelValue.length <= 3">
             <Badge
@@ -151,7 +156,7 @@ const triggerClass = computed(() =>
             variant="secondary"
             class="rounded-sm px-1.5 py-0 text-xs font-normal"
           >
-            {{ modelValue.length }} selected
+            {{ modelValue.length }} {{ $t("selected") }}
           </Badge>
         </div>
         <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -165,7 +170,7 @@ const triggerClass = computed(() =>
       <Command>
         <CommandInput :id="id" :placeholder="placeholder" />
         <CommandList>
-          <CommandEmpty>No results</CommandEmpty>
+          <CommandEmpty>{{ $t("noResults") }}</CommandEmpty>
           <CommandGroup>
             <ScrollArea class="h-64">
               <FilterTreeSelectOption
@@ -185,7 +190,7 @@ const triggerClass = computed(() =>
                 class="justify-center text-center"
                 @select="handleClear"
               >
-                Clear filters
+                {{ $t("clearFilters") }}
               </CommandItem>
             </CommandGroup>
           </template>

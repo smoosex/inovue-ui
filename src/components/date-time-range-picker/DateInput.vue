@@ -3,6 +3,7 @@ import { ref, watch, useId, useTemplateRef } from "vue";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { DateParts } from "./types";
+import { GetI18nText, type Locale } from "./locales";
 
 const inputId = useId();
 
@@ -12,11 +13,15 @@ const props = withDefaults(
   defineProps<{
     disabled?: boolean;
     class?: string;
+    locale?: Locale;
   }>(),
   {
     disabled: false,
   }
 );
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const monthRef = useTemplateRef<HTMLInputElement>("monthRef");
 const dayRef = useTemplateRef<HTMLInputElement>("dayRef");
@@ -232,7 +237,7 @@ const handleFocus = (e: FocusEvent) => {
       @focus="handleFocus"
       @blur="handleBlur('month', $event)"
       class="p-0 outline-none w-6 border-none text-center"
-      placeholder="M"
+      :placeholder="$t('month')"
       :disabled="disabled"
     />
     <span class="opacity-20 -mx-px">/</span>
@@ -248,7 +253,7 @@ const handleFocus = (e: FocusEvent) => {
       @focus="handleFocus"
       @blur="handleBlur('day', $event)"
       class="p-0 outline-none w-7 border-none text-center"
-      placeholder="D"
+      :placeholder="$t('day')"
       :disabled="disabled"
     />
     <span class="opacity-20 -mx-px">/</span>
@@ -264,7 +269,7 @@ const handleFocus = (e: FocusEvent) => {
       @focus="handleFocus"
       @blur="handleBlur('year', $event)"
       class="p-0 outline-none w-12 border-none text-center"
-      placeholder="YYYY"
+      :placeholder="$t('year')"
       :disabled="disabled"
     />
   </div>

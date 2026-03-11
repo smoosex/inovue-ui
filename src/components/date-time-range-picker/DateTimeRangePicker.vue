@@ -55,6 +55,10 @@ const currentLocale = computed<Locale>(() => {
   return props.locale === "zhHans" ? zhCN : enUS;
 });
 
+const calendarLocale = computed(() =>
+  props.locale === "zhHans" ? "zh-CN" : "en-US",
+);
+
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
 
@@ -156,12 +160,16 @@ const getPresetRange = (presetName: string): DateTimeRange => {
       return { from: subDays(today, 29), to: endToday };
     case "thisWeek":
       return {
-        from: startOfWeek(today, { weekStartsOn: 0 }),
+        from: startOfWeek(today, { locale: currentLocale.value }),
         to: endToday,
       };
     case "lastWeek": {
-      const lastWeekStart = startOfWeek(subDays(today, 7), { weekStartsOn: 0 });
-      const lastWeekEnd = endOfWeek(lastWeekStart, { weekStartsOn: 0 });
+      const lastWeekStart = startOfWeek(subDays(today, 7), {
+        locale: currentLocale.value,
+      });
+      const lastWeekEnd = endOfWeek(lastWeekStart, {
+        locale: currentLocale.value,
+      });
       return { from: lastWeekStart, to: lastWeekEnd };
     }
     case "thisMonth":
@@ -280,77 +288,83 @@ const handleUpdate = () => {
         </template>
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-0" :align="align" :side-offset="4">
-      <div class="flex flex-col lg:flex-row gap-4">
-        <!-- Calendar Section -->
-        <div class="space-y-4 p-4">
-          <div class="hidden lg:block">
-            <!-- RangeCalendar with 2 months for desktop -->
-            <RangeCalendar
-              v-model="calendarRange"
-              :number-of-months="2"
-              class="border rounded-md"
-            />
+    <PopoverContent
+      class="flex w-auto flex-col overflow-hidden p-0"
+      :align="align"
+      :side-offset="4"
+      style="max-height: min(90vh, var(--reka-popover-content-available-height));"
+    >
+      <div class="min-h-0 overflow-y-auto">
+        <div class="flex flex-col gap-4 lg:flex-row">
+          <div class="space-y-4 p-4">
+            <div class="hidden lg:block">
+              <RangeCalendar
+                v-model="calendarRange"
+                :number-of-months="2"
+                :locale="calendarLocale"
+                class="border rounded-md"
+              />
+            </div>
+
+            <div class="lg:hidden">
+              <RangeCalendar
+                v-model="calendarRange"
+                :number-of-months="1"
+                :locale="calendarLocale"
+                class="border rounded-md"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <DateTimeInput
+                :model-value="range.from"
+                :label="$t('start')"
+                :locale="props.locale"
+                @update:model-value="handleFromDateTimeChange"
+              />
+              <ChevronRightIcon class="mx-2 h-4 w-4" />
+              <DateTimeInput
+                :model-value="range.to"
+                :label="$t('end')"
+                :locale="props.locale"
+                @update:model-value="handleToDateTimeChange"
+              />
+            </div>
           </div>
 
-          <!-- Single month calendar for mobile -->
-          <div class="lg:hidden">
-            <RangeCalendar
-              v-model="calendarRange"
-              :number-of-months="1"
-              class="border rounded-md"
-            />
-          </div>
-
-          <div class="flex justify-between items-center">
-            <DateTimeInput
-              :model-value="range.from"
-              :label="$t('start')"
-              @update:model-value="handleFromDateTimeChange"
-            />
-            <ChevronRightIcon class="mx-2 h-4 w-4" />
-            <DateTimeInput
-              :model-value="range.to"
-              :label="$t('end')"
-              @update:model-value="handleToDateTimeChange"
-            />
-          </div>
-        </div>
-
-        <!-- Presets Section -->
-        <div class="lg:border-l lg:pl-4 space-y-2 p-4">
-          <h3 class="font-medium text-sm">
-            {{ $t('presets') }}
-          </h3>
-          <div class="grid grid-cols-2 lg:grid-cols-1 gap-1">
-            <Button
-              v-for="preset in PRESETS"
-              :key="preset.name"
-              :class="
-                cn(
-                  'justify-start',
-                  selectedPreset === preset.name && 'bg-muted'
-                )
-              "
-              variant="ghost"
-              @click="setPreset(preset.name)"
-            >
-              <CheckIcon
+          <div class="space-y-2 p-4 lg:border-l lg:pl-4">
+            <h3 class="font-medium text-sm">
+              {{ $t('presets') }}
+            </h3>
+            <div class="grid grid-cols-2 gap-1 lg:grid-cols-1">
+              <Button
+                v-for="preset in PRESETS"
+                :key="preset.name"
                 :class="
                   cn(
-                    'mr-2 h-4 w-4',
-                    selectedPreset === preset.name ? 'opacity-100' : 'opacity-0'
+                    'justify-start',
+                    selectedPreset === preset.name && 'bg-muted'
                   )
                 "
-              />
-              {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
-            </Button>
+                variant="ghost"
+                @click="setPreset(preset.name)"
+              >
+                <CheckIcon
+                  :class="
+                    cn(
+                      'mr-2 h-4 w-4',
+                      selectedPreset === preset.name ? 'opacity-100' : 'opacity-0'
+                    )
+                  "
+                />
+                {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Footer Actions -->
-      <div class="flex items-center justify-end gap-2 p-4 border-t">
+      <div class="flex shrink-0 items-center justify-end gap-2 border-t bg-popover p-4">
         <Button variant="ghost" @click="handleCancel">{{ $t("cancel") }}</Button>
         <Button @click="handleUpdate">{{ $t("confirm") }}</Button>
       </div>

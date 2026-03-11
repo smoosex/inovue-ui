@@ -18,6 +18,11 @@ const translations = {
     lastWeek: "Last Week",
     thisMonth: "This Month",
     lastMonth: "Last Month",
+    month: "M",
+    day: "D",
+    year: "YYYY",
+    am: "AM",
+    pm: "PM",
   },
   zhHans: {
     cancel: "取消",
@@ -36,6 +41,11 @@ const translations = {
     lastWeek: "上周",
     thisMonth: "本月",
     lastMonth: "上月",
+    month: "月",
+    day: "日",
+    year: "年",
+    am: "上午",
+    pm: "下午",
   },
 } as const;
 

@@ -3,6 +3,7 @@ import { computed, useAttrs } from "vue";
 import { X } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { GetI18nText, type Locale } from "./locales";
 
 const attrs = useAttrs();
 
@@ -13,7 +14,11 @@ defineOptions({
 const props = defineProps<{
   placeholder?: string;
   id?: string;
+  locale?: Locale;
 }>();
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const inputId =
   props.id || `filter-input-${Math.random().toString(36).slice(2)}`;
@@ -42,7 +47,7 @@ const inputClass = computed(() =>
     <Input
       :id="inputId"
       v-model="modelValue"
-      :placeholder="placeholder || 'Search'"
+      :placeholder="placeholder || $t('search')"
       :class="inputClass"
       @keyup.enter="emit('search')"
     />

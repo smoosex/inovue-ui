@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-vue-next";
 import type { TimeParts } from "./types";
+import { GetI18nText, type Locale } from "./locales";
 
 const inputId = useId();
 const modelValue = defineModel<Date>();
@@ -13,11 +14,15 @@ const props = withDefaults(
   defineProps<{
     disabled?: boolean;
     class?: string;
+    locale?: Locale;
   }>(),
   {
     disabled: false,
   }
 );
+
+const $t = (key: Parameters<typeof GetI18nText>[0]) =>
+  GetI18nText(key, props.locale || "en");
 
 const time = ref<TimeParts>({
   hours: 12,
@@ -194,7 +199,7 @@ const formatTimeValue = (value: number): string => {
       :disabled="disabled"
       @click="handleAmPmToggle"
     >
-      {{ time.ampm }}
+      {{ time.ampm === "AM" ? $t("am") : $t("pm") }}
     </Button>
   </div>
 </template>

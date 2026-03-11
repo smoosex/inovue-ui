@@ -9,8 +9,17 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import {
+  endOfDay,
+  endOfWeek,
+  endOfMonth,
   format,
+  isEqual,
   isValid,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  subDays,
+  subMonths,
 } from "date-fns";
 import { enUS, zhCN, type Locale } from "date-fns/locale";
 import { CheckIcon, ChevronDownIcon } from "lucide-vue-next";
@@ -44,6 +53,10 @@ const currentLocale = computed<Locale>(() => {
   return props.locale === "zhHans" ? zhCN : enUS;
 });
 
+const calendarLocale = computed(() =>
+  props.locale === "zhHans" ? "zh-CN" : "en-US",
+);
+
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
 
@@ -61,9 +74,9 @@ const dateValueToDate = (dateValue: DateValue): Date => {
 
 const formatDate = (date: Date | undefined, locale: Locale): string => {
   if (!date || !isValid(date)) {
-  return "Select date"
+    return $t("selectDate");
   }
-  return format(date, "PPP", { locale })
+  return format(date, "PPP", { locale });
 };
 
 const isOpen = ref(false);
@@ -108,61 +121,60 @@ watch(
 
 const getPresetRange = (presetName: string): DateRange => {
   const now = new Date();
-  const today = new Date(now.setHours(0, 0, 0, 0));
-  const endToday = new Date(new Date().setHours(23, 59, 59, 999));
+  const today = startOfDay(now);
+  const endToday = endOfDay(now);
 
   switch (presetName) {
     case "today":
       return { from: today, to: endToday };
     case "yesterday": {
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterday = subDays(today, 1);
       return {
         from: yesterday,
-        to: new Date(yesterday.setHours(23, 59, 59, 999)),
+        to: endOfDay(yesterday),
       };
     }
     case "last7":
       return {
-        from: new Date(new Date().setDate(new Date().getDate() - 6)),
+        from: subDays(today, 6),
         to: endToday,
       };
     case "last14":
       return {
-        from: new Date(new Date().setDate(new Date().getDate() - 13)),
+        from: subDays(today, 13),
         to: endToday,
       };
     case "last30":
       return {
-        from: new Date(new Date().setDate(new Date().getDate() - 29)),
+        from: subDays(today, 29),
         to: endToday,
       };
     case "thisWeek": {
-      const first = today.getDate() - today.getDay();
-      return { from: new Date(new Date().setDate(first)), to: endToday };
+      return {
+        from: startOfWeek(today, { locale: currentLocale.value }),
+        to: endToday,
+      };
     }
     case "lastWeek": {
-      const t = new Date();
-      const first = t.getDate() - t.getDay() - 7;
-      const last = first + 6;
+      const lastWeekStart = startOfWeek(subDays(today, 7), {
+        locale: currentLocale.value,
+      });
       return {
-        from: new Date(new Date().setDate(first)),
-        to: new Date(new Date().setDate(last)),
+        from: lastWeekStart,
+        to: endOfWeek(lastWeekStart, { locale: currentLocale.value }),
       };
     }
     case "thisMonth": {
       return {
-        from: new Date(new Date().setDate(1)),
+        from: startOfMonth(today),
         to: endToday,
       };
     }
     case "lastMonth": {
-      const lastMonth = new Date(
-        new Date().setMonth(new Date().getMonth() - 1)
-      );
+      const lastMonth = subMonths(today, 1);
       return {
-        from: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 1),
-        to: new Date(lastMonth.getFullYear(), lastMonth.getMonth() + 1, 0),
+        from: startOfMonth(lastMonth),
+        to: endOfMonth(lastMonth),
       };
     }
     default:
@@ -186,8 +198,11 @@ const checkPreset = () => {
   for (const preset of PRESETS) {
     const presetRange = getPresetRange(preset.name);
     if (
-      presetRange.from.getTime() === range.value.from.getTime() &&
-      presetRange.to?.getTime() === range.value.to?.getTime()
+      isEqual(startOfDay(presetRange.from), startOfDay(range.value.from)) &&
+      isEqual(
+        endOfDay(presetRange.to ?? presetRange.from),
+        endOfDay(range.value.to ?? range.value.from),
+      )
     ) {
       selectedPreset.value = preset.name;
       return;
@@ -273,75 +288,81 @@ const handleUpdate = () => {
         </template>
       </Button>
     </PopoverTrigger>
-    <PopoverContent class="w-auto p-0" :align="align" :side-offset="4">
-      <div class="flex flex-col lg:flex-row gap-4 p-4">
-        <!-- Calendar Section -->
-        <div class="space-y-4">
-          <div class="hidden lg:block">
-            <!-- One RangeCalendar with 2 months for desktop -->
-            <RangeCalendar
-              v-model="calendarRange"
-              :number-of-months="2"
-              class="border rounded-md"
-            />
+    <PopoverContent
+      class="flex w-auto flex-col overflow-hidden p-0"
+      :align="align"
+      :side-offset="4"
+      style="max-height: min(90vh, var(--reka-popover-content-available-height));"
+    >
+      <div class="min-h-0 overflow-y-auto">
+        <div class="flex flex-col gap-4 p-4 lg:flex-row">
+          <div class="space-y-4">
+            <div class="hidden lg:block">
+              <RangeCalendar
+                v-model="calendarRange"
+                :number-of-months="2"
+                :locale="calendarLocale"
+                class="border rounded-md"
+              />
+            </div>
+
+            <div class="lg:hidden">
+              <RangeCalendar
+                v-model="calendarRange"
+                :number-of-months="1"
+                :locale="calendarLocale"
+                class="border rounded-md"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <DateInput
+                :model-value="range.from"
+                :locale="props.locale"
+                @update:model-value="handleFromDateChange"
+              />
+              <ChevronDownIcon class="mx-2 h-4 w-4" />
+              <DateInput
+                :model-value="range.to"
+                :locale="props.locale"
+                @update:model-value="handleToDateChange"
+              />
+            </div>
           </div>
 
-          <!-- Single month calendar for mobile -->
-          <div class="lg:hidden">
-            <RangeCalendar
-              v-model="calendarRange"
-              :number-of-months="1"
-              class="border rounded-md"
-            />
-          </div>
-
-          <div class="flex justify-between items-center">
-            <DateInput
-              :model-value="range.from"
-              @update:model-value="handleFromDateChange"
-            />
-            <ChevronDownIcon class="mx-2 h-4 w-4" />
-            <DateInput
-              :model-value="range.to"
-              @update:model-value="handleToDateChange"
-            />
-          </div>
-        </div>
-
-        <!-- Presets Section -->
-        <div class="lg:border-l lg:pl-4 space-y-2">
-          <h3 class="font-medium text-sm">
-            {{ $t('presets') }}
-          </h3>
-          <div class="grid grid-cols-2 lg:grid-cols-1 gap-1">
-            <Button
-              v-for="preset in PRESETS"
-              :key="preset.name"
-              :class="
-                cn(
-                  'justify-start',
-                  selectedPreset === preset.name && 'bg-muted'
-                )
-              "
-              variant="ghost"
-              @click="setPreset(preset.name)"
-            >
-              <CheckIcon
+          <div class="space-y-2 lg:border-l lg:pl-4">
+            <h3 class="font-medium text-sm">
+              {{ $t('presets') }}
+            </h3>
+            <div class="grid grid-cols-2 gap-1 lg:grid-cols-1">
+              <Button
+                v-for="preset in PRESETS"
+                :key="preset.name"
                 :class="
                   cn(
-                    'mr-2 h-4 w-4',
-                    selectedPreset === preset.name ? 'opacity-100' : 'opacity-0'
+                    'justify-start',
+                    selectedPreset === preset.name && 'bg-muted'
                   )
                 "
-              />
-              {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
-            </Button>
+                variant="ghost"
+                @click="setPreset(preset.name)"
+              >
+                <CheckIcon
+                  :class="
+                    cn(
+                      'mr-2 h-4 w-4',
+                      selectedPreset === preset.name ? 'opacity-100' : 'opacity-0'
+                    )
+                  "
+                />
+                {{ $t(preset.name as Parameters<typeof GetI18nText>[0]) }}
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Footer Actions -->
-      <div class="flex items-center justify-end gap-2 p-4 border-t">
+      <div class="flex shrink-0 items-center justify-end gap-2 border-t bg-popover p-4">
         <Button variant="ghost" @click="handleCancel">{{ $t("cancel") }}</Button>
         <Button @click="handleUpdate">{{ $t("confirm") }}</Button>
       </div>
