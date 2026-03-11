@@ -176,6 +176,10 @@
         {
           "path": "src/components/smart-search-input/FilterCascadeSelect.vue",
           "type": "registry:component"
+        },
+        {
+          "path": "src/components/smart-search-input/FilterClearButton.vue",
+          "type": "registry:component"
         }
       ]
     }
