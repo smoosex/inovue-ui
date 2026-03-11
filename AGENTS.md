@@ -42,7 +42,7 @@ bun run dev
 bun run build
 
 # Generate shadcn-vue registry JSON files into public/r
-bunx --bun shadcn-vue@latest build --output
+bunx --bun shadcn-vue@latest build
 ```
 
 ## Working Model

@@ -47,5 +47,5 @@ bun run build
 Generate registry files:
 
 ```bash
-bunx --bun shadcn-vue@latest build --output
+bunx --bun shadcn-vue@latest build
 ```
