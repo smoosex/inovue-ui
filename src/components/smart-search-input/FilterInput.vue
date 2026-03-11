@@ -30,14 +30,14 @@ const emit = defineEmits<{
 
 const inputClass = computed(() =>
   cn(
-    "w-50 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
+    "w-full min-w-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
     attrs.class as string
   )
 );
 </script>
 
 <template>
-  <div class="relative flex w-50 items-center">
+  <div class="relative flex w-full min-w-0 items-center">
     <Input
       :id="inputId"
       v-model="modelValue"

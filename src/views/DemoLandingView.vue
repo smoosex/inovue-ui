@@ -100,7 +100,7 @@ const handleCopyCommand = async (commandKey: string, command: string) => {
 
       <div class="relative flex flex-col gap-8">
         <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.92fr)] lg:items-start">
-          <div class="flex flex-col gap-4 lg:h-full lg:pr-4">
+          <div class="min-w-0 flex flex-col gap-4 lg:h-full lg:pr-4">
             <div class="hero-diagram-title">
               {{ $t("demo.hero.diagramTitle") }}
             </div>
@@ -179,7 +179,7 @@ const handleCopyCommand = async (commandKey: string, command: string) => {
             </div>
           </div>
 
-          <div class="glass-card rounded-[1.5rem] p-5">
+          <div class="glass-card min-w-0 rounded-[1.5rem] p-5">
             <div class="flex items-center gap-2 text-sm font-medium text-foreground">
               <Terminal class="h-4 w-4" />
               {{ $t("demo.hero.installTitle") }}

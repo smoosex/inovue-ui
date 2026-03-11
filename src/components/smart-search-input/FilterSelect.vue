@@ -52,7 +52,7 @@ const handleChange = (val: any) => {
 };
 
 const triggerClass = computed(() =>
-  cn("w-50 rounded-none border focus:ring-0", attrs.class as string)
+  cn("w-full min-w-0 rounded-none border focus:ring-0", attrs.class as string)
 );
 
 const hasMore = computed(() => {

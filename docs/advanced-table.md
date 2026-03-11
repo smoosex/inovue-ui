@@ -216,6 +216,8 @@ const rowExpandMode = (row: Row) => row.expandMode;
 - `toolbarSecondaryActions?: ToolbarAction[]` 工具栏次按钮
 - `filterOptions?: FilterOption[]` 高级筛选配置
 
+工具栏在窄宽度下会自动换行，优先保留操作按钮可见性，高级筛选会换到下一行展开。
+
 ## Events
 
 - `search` 触发筛选搜索，参数为 `FilterValue`
