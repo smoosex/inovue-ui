@@ -57,6 +57,8 @@ export default {
       add: "新增",
       edit: "编辑",
       delete: "删除",
+      enableCrossPageSelection: "开启跨页选择",
+      disableCrossPageSelection: "关闭跨页选择",
       showColumns: "显示列设置",
       hideColumns: "隐藏列设置",
       showPagination: "显示分页",

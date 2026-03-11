@@ -57,6 +57,8 @@ export default {
       add: "Add",
       edit: "Edit",
       delete: "Delete",
+      enableCrossPageSelection: "Enable cross-page selection",
+      disableCrossPageSelection: "Disable cross-page selection",
       showColumns: "Show column settings",
       hideColumns: "Hide column settings",
       showPagination: "Show pagination",

@@ -6,6 +6,7 @@ type Props = {
   total: number;
   pageSizes?: number[];
   locale?: Locale;
+  selectedCount?: number;
 };
 
 const props = withDefaults(defineProps<Props>(), {
@@ -23,10 +24,22 @@ const pageSizeModel = computed({
   get: () => pageSize.value,
   set: (val) => (pageSize.value = Number(val)),
 });
+
+const selectedCountLabel = computed(() =>
+  props.locale === "zhHans"
+    ? `已选：${props.selectedCount ?? 0} 条`
+    : `Selected: ${props.selectedCount ?? 0} items`,
+);
 </script>
 
 <template>
-  <div class="pt-4 flex items-center justify-end gap-4 px-2">
+  <div class="pt-4 flex flex-col gap-3 px-2 md:flex-row md:items-center md:justify-between">
+    <div
+      v-if="props.selectedCount !== undefined"
+      class="text-sm font-medium whitespace-nowrap text-muted-foreground"
+    >
+      {{ selectedCountLabel }}
+    </div>
     <Pagination
       v-model:page="pageNum"
       :total="total"
@@ -55,8 +68,6 @@ const pageSizeModel = computed({
           </PaginationItem>
           <PaginationEllipsis v-else :key="item.type" :index="index" />
         </template>
-
-        <!-- Page Size Selector -->
         <li class="flex items-center gap-2 mx-2">
           <Select v-model="pageSizeModel">
             <SelectTrigger class="h-9 w-20">
@@ -76,7 +87,6 @@ const pageSizeModel = computed({
             <span class="text-primary font-bold">{{ total }}</span>
           </span>
         </li>
-
         <PaginationNext>
           <span class="hidden sm:block">{{ $t("next") }}</span>
           <ChevronRightIcon class="h-4 w-4" />

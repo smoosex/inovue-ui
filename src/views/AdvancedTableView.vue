@@ -46,6 +46,7 @@ const pageNum = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 const selectedIds = ref<string[]>([]);
+const selectionScope = ref<"cross-page" | "page">("cross-page");
 const showColumnToggle = ref(true);
 const showPagination = ref(true);
 const loading = ref(false);
@@ -282,6 +283,17 @@ const secondaryActions = computed<ToolbarAction[]>(() => [
     disabled: selectedIds.value.length === 0,
   },
   {
+    key: "selection-scope-toggle",
+    label: selectionScope.value === "cross-page"
+      ? t("demo.advancedTable.actions.disableCrossPageSelection")
+      : t("demo.advancedTable.actions.enableCrossPageSelection"),
+    variant: "outline",
+    onClick: () => {
+      selectionScope.value =
+        selectionScope.value === "cross-page" ? "page" : "cross-page";
+    },
+  },
+  {
     key: "column-toggle",
     label: showColumnToggle.value
       ? t("demo.advancedTable.actions.hideColumns")
@@ -356,6 +368,7 @@ onMounted(() => {
         :total="total"
         :loading="loading"
         :show-column-toggle="showColumnToggle"
+        :selection-scope="selectionScope"
         :show-toolbar="true"
         :toolbar-primary-actions="primaryActions"
         :toolbar-secondary-actions="secondaryActions"

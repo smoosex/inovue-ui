@@ -37,6 +37,7 @@ type Props = {
   total: number;
   showCheckbox?: boolean;
   rowSelectable?: (row: T) => boolean;
+  selectionScope?: "cross-page" | "page";
   showColumnToggle?: boolean;
   showExpand?: boolean;
   rowExpandable?: (row: T) => boolean;
@@ -56,6 +57,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   showCheckbox: true,
+  selectionScope: "cross-page",
   showColumnToggle: true,
   showExpand: false,
   showPagination: true,
@@ -112,6 +114,10 @@ const rightStickyOffset = computed(() =>
 const isRowSelectable = (row: T) =>
   props.rowSelectable ? props.rowSelectable(row) : true;
 
+const currentRowIds = computed(() =>
+  props.data.map((row) => row[props.rowKey] as RowKeyType),
+);
+
 const selectableRows = computed(() =>
   props.data.filter((row) => isRowSelectable(row)),
 );
@@ -129,9 +135,22 @@ const allSelected = computed(() => {
 
 const toggleAll = (checked: boolean) => {
   if (checked) {
-    selectedIds.value = [...selectableRowIds.value];
+    if (props.selectionScope === "page") {
+      selectedIds.value = [...selectableRowIds.value];
+      return;
+    }
+    selectedIds.value = Array.from(
+      new Set([...selectedIds.value, ...selectableRowIds.value]),
+    );
   } else {
-    selectedIds.value = [];
+    if (props.selectionScope === "page") {
+      selectedIds.value = [];
+      return;
+    }
+    const currentSelectableIdSet = new Set(selectableRowIds.value);
+    selectedIds.value = selectedIds.value.filter(
+      (id) => !currentSelectableIdSet.has(id),
+    );
   }
 };
 
@@ -210,12 +229,17 @@ watch(
 );
 
 watch(
-  selectableRowIds,
-  (nextSelectableRowIds) => {
+  [currentRowIds, selectableRowIds, () => props.selectionScope],
+  ([nextCurrentRowIds, nextSelectableRowIds, nextSelectionScope]) => {
+    const currentRowIdSet = new Set(nextCurrentRowIds);
     const selectableIdSet = new Set(nextSelectableRowIds);
-    selectedIds.value = selectedIds.value.filter((id) =>
-      selectableIdSet.has(id),
-    );
+    const nextSelectedIds = selectedIds.value.filter((id) => {
+      if (selectableIdSet.has(id)) return true;
+      if (currentRowIdSet.has(id)) return false;
+      return nextSelectionScope === "cross-page";
+    });
+    if (nextSelectedIds.length === selectedIds.value.length) return;
+    selectedIds.value = nextSelectedIds;
   },
   { immediate: true },
 );
@@ -550,6 +574,7 @@ const getCellClass = (col: Column) => {
       v-model:pageNum="pageNum"
       v-model:page-size="pageSize"
       :total="total"
+      :selected-count="props.showCheckbox ? selectedIds.length : undefined"
       :locale="props.locale"
     />
   </div>
