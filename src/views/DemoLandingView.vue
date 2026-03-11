@@ -197,7 +197,7 @@ const handleCopyCommand = async (commandKey: string, command: string) => {
               :class="$t('demo.hero.installDescription') ? 'mt-4' : 'mt-3'"
               default-value="bun"
             >
-              <TabsList class="grid h-auto w-full grid-cols-4 rounded-2xl bg-white/8 p-1 dark:bg-white/6">
+              <TabsList class="grid h-auto w-full grid-cols-4 rounded-2xl bg-white/30 p-1 dark:bg-white/6">
                 <TabsTrigger
                   value="pnpm"
                   class="rounded-xl px-3 py-2 text-xs font-medium data-[state=active]:bg-white/14"
@@ -233,7 +233,7 @@ const handleCopyCommand = async (commandKey: string, command: string) => {
                 <div
                   v-for="item in installComponents"
                   :key="`${manager}-${item.key}`"
-                  class="rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-xl"
+                  class="rounded-2xl border border-white/40 bg-white/20 p-3 backdrop-blur-xl dark:border-white/10 dark:bg-black/20"
                 >
                   <div class="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
                     {{ item.label }}
