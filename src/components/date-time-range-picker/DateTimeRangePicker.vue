@@ -258,7 +258,7 @@ const handleUpdate = () => {
         variant="outline"
         :class="
           cn(
-            'w-full sm:w-auto min-w-70 min-h-9 py-1 justify-start text-left font-normal',
+            'w-full sm:w-fit max-w-full min-h-9 py-1 justify-start text-left font-normal',
             props.class
           )
         "

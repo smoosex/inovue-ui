@@ -10,11 +10,13 @@ import type {
   SelectOption,
 } from "./types";
 import { GetI18nText, type Locale } from "./locales";
+import { cn } from "@/lib/utils";
 import FilterInput from "./FilterInput.vue";
 import FilterSelect from "./FilterSelect.vue";
 import FilterMultiSelect from "./FilterMultiSelect.vue";
 import FilterTreeSelect from "./FilterTreeSelect.vue";
 import FilterCascadeSelect from "./FilterCascadeSelect.vue";
+import FilterClearButton from "./FilterClearButton.vue";
 import { DateTimeRangePicker } from "@/components/date-time-range-picker";
 
 const props = withDefaults(
@@ -184,11 +186,56 @@ const formatFilterValue = (
   }
 };
 
+const isEmptyFilterValue = (
+  value: AnyFilterValue,
+  type?: FilterInputType,
+): boolean => {
+  switch (type) {
+    case "multi-select":
+    case "tree-multi-select":
+      return !Array.isArray(value) || value.length === 0;
+    case "date-time-range": {
+      const range = value as { from?: Date; to?: Date };
+      return !range?.from && !range?.to;
+    }
+    case "cascade-select": {
+      const cascade = value as { level1?: string; level2?: string };
+      return !cascade?.level1 && !cascade?.level2;
+    }
+    case "select":
+      return value == null || String(value) === "";
+    case "text":
+    default:
+      return String(value ?? "").trim() === "";
+  }
+};
+
+const hasCurrentValue = computed(
+  () => !isEmptyFilterValue(currentValue.value, currentOption.value?.type),
+);
+
+const currentInputClass = computed(() =>
+  cn(
+    "rounded-none border",
+    currentOption.value?.type === "date-time-range" && "sm:min-w-50",
+  ),
+);
+
+const removeActiveFilter = (key: string) => {
+  activeFilters.value = activeFilters.value.filter((filter) => filter.key !== key);
+};
+
 const handleSearch = () => {
   const formatFn = currentOption.value?.formatValue;
   const formattedValue = formatFn
     ? formatFn(currentValue.value)
     : currentValue.value;
+
+  if (isEmptyFilterValue(currentValue.value, currentOption.value?.type)) {
+    removeActiveFilter(selectedKey.value);
+    emit("search", { key: selectedKey.value, value: formattedValue });
+    return;
+  }
 
   const newItem: ActiveFilterItem = {
     key: selectedKey.value,
@@ -211,10 +258,26 @@ const handleSearch = () => {
 
   emit("search", { key: selectedKey.value, value: formattedValue });
 };
+
+const handleClearCurrentValue = () => {
+  const hadActiveFilter = activeFilters.value.some(
+    (filter) => filter.key === selectedKey.value,
+  );
+  currentValue.value = getDefaultValue(currentOption.value?.type);
+  removeActiveFilter(selectedKey.value);
+
+  if (hadActiveFilter) {
+    const formatFn = currentOption.value?.formatValue;
+    const formattedValue = formatFn
+      ? formatFn(currentValue.value)
+      : currentValue.value;
+    emit("search", { key: selectedKey.value, value: formattedValue });
+  }
+};
 </script>
 
 <template>
-  <div class="flex items-center">
+  <div class="inline-flex max-w-full items-center">
     <Select v-model="selectedKey">
       <SelectTrigger class="w-50 rounded-r-none border-r-0 focus:ring-0">
         <SelectValue :placeholder="$t('selectColumn')" />
@@ -230,27 +293,33 @@ const handleSearch = () => {
       </SelectContent>
     </Select>
 
-    <component
-      :is="resolveComponent(currentOption?.type)"
-      :model-value="currentValue as any"
-      @update:model-value="(val: any) => (currentValue = val)"
-      :options="currentOption?.options"
-      :level1-options="currentOption?.options"
-      :placeholder="currentOption?.placeholder"
-      :total="currentOption?.total"
-      :current-page="currentOption?.currentPage"
-      :page-size="currentOption?.pageSize"
-      :loading="currentOption?.loading"
-      :level1-label="currentOption?.level1Label"
-      :level2-label="currentOption?.level2Label"
-      :load-children="currentOption?.loadChildren"
-      :locale="props.locale"
-      class="rounded-none border"
-      @search="handleSearch"
-      @load-more="currentOption?.loadMore?.()"
-      @load-children="emit('loadChildren', $event)"
-      :id="currentOption?.label"
-    />
+    <div class="group relative max-w-full">
+      <component
+        :is="resolveComponent(currentOption?.type)"
+        :model-value="currentValue as any"
+        @update:model-value="(val: any) => (currentValue = val)"
+        :options="currentOption?.options"
+        :level1-options="currentOption?.options"
+        :placeholder="currentOption?.placeholder"
+        :total="currentOption?.total"
+        :current-page="currentOption?.currentPage"
+        :page-size="currentOption?.pageSize"
+        :loading="currentOption?.loading"
+        :level1-label="currentOption?.level1Label"
+        :level2-label="currentOption?.level2Label"
+        :load-children="currentOption?.loadChildren"
+        :locale="props.locale"
+        :class="currentInputClass"
+        @search="handleSearch"
+        @load-more="currentOption?.loadMore?.()"
+        @load-children="emit('loadChildren', $event)"
+        :id="currentOption?.label"
+      />
+      <FilterClearButton
+        :visible="hasCurrentValue"
+        @click="handleClearCurrentValue"
+      />
+    </div>
 
     <Button
       size="icon"

@@ -82,10 +82,7 @@ const formatDate = (date: Date | undefined, locale: Locale): string => {
 const isOpen = ref(false);
 const range = ref<DateRange>({
   from: modelValue.value?.from || new Date(new Date().setHours(0, 0, 0, 0)),
-  to:
-    modelValue.value?.to ||
-    modelValue.value?.from ||
-    new Date(new Date().setHours(0, 0, 0, 0)),
+  to: modelValue.value?.to,
 });
 const openedRange = ref<DateRange>({ ...range.value });
 const selectedPreset = ref<string | undefined>(undefined);
@@ -95,7 +92,7 @@ const calendarRange = computed<RekaDateRange>({
     start: dateToDateValue(range.value.from),
     end: range.value.to
       ? dateToDateValue(range.value.to)
-      : dateToDateValue(range.value.from),
+      : undefined,
   }),
   set: (newVal) => {
     if (newVal.start) {
@@ -113,7 +110,7 @@ watch(
     if (newVal) {
       range.value = {
         from: newVal.from,
-        to: newVal.to || newVal.from,
+        to: newVal.to,
       };
     }
   }
@@ -214,15 +211,12 @@ const checkPreset = () => {
 const resetValues = () => {
   const fromDate =
     modelValue.value?.from || new Date(new Date().setHours(0, 0, 0, 0));
-  const toDate =
-    modelValue.value?.to ||
-    modelValue.value?.from ||
-    new Date(new Date().setHours(0, 0, 0, 0));
+  const toDate = modelValue.value?.to;
   range.value = { from: fromDate, to: toDate };
   selectedPreset.value = undefined;
   calendarRange.value = {
     start: dateToDateValue(fromDate),
-    end: dateToDateValue(toDate),
+    end: toDate ? dateToDateValue(toDate) : undefined,
   };
 };
 
@@ -276,7 +270,7 @@ const handleUpdate = () => {
         variant="outline"
         :class="
           cn(
-            'w-full sm:w-75 justify-start text-left text-[11px] font-normal text-wrap',
+            'w-full sm:w-fit max-w-full justify-start text-left text-[11px] font-normal text-wrap',
             props.class
           )
         "

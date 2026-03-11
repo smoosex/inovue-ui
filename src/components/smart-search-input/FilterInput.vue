@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from "vue";
-import { X } from "lucide-vue-next";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { GetI18nText, type Locale } from "./locales";
@@ -29,11 +28,6 @@ const emit = defineEmits<{
   (e: "search"): void;
 }>();
 
-const handleClear = () => {
-  modelValue.value = "";
-  emit("search");
-};
-
 const inputClass = computed(() =>
   cn(
     "w-50 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0",
@@ -43,7 +37,7 @@ const inputClass = computed(() =>
 </script>
 
 <template>
-  <div class="relative flex items-center flex-1">
+  <div class="relative flex w-50 items-center">
     <Input
       :id="inputId"
       v-model="modelValue"
@@ -51,12 +45,5 @@ const inputClass = computed(() =>
       :class="inputClass"
       @keyup.enter="emit('search')"
     />
-    <button
-      v-if="modelValue"
-      @click="handleClear"
-      class="absolute right-2 text-muted-foreground hover:text-foreground"
-    >
-      <X class="h-4 w-4" />
-    </button>
   </div>
 </template>
