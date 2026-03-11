@@ -277,7 +277,7 @@ const handleClearCurrentValue = () => {
 </script>
 
 <template>
-  <div class="flex w-full min-w-0 max-w-full items-center">
+  <div class="flex w-full min-w-0 max-w-full items-center lg:inline-flex lg:w-auto">
     <Select v-model="selectedKey">
       <SelectTrigger class="w-32 shrink-0 rounded-r-none border-r-0 focus:ring-0 sm:w-40 xl:w-50">
         <SelectValue :placeholder="$t('selectColumn')" />
@@ -293,7 +293,7 @@ const handleClearCurrentValue = () => {
       </SelectContent>
     </Select>
 
-    <div class="group relative min-w-0 flex-1 max-w-full">
+    <div class="group relative min-w-0 flex-1 max-w-full lg:w-50 lg:flex-none">
       <component
         :is="resolveComponent(currentOption?.type)"
         :model-value="currentValue as any"
