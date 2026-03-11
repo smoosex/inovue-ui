@@ -1,18 +1,47 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, watchEffect } from "vue";
 import { Plus, Pencil, Trash2 } from "lucide-vue-next";
 import { AdvancedTable } from "@/components/advanced-table";
 import type {
+  ActiveFilterItem,
   Column,
   FilterOption,
   ToolbarAction,
 } from "@/components/advanced-table";
-import { GetUsersApi, type User } from "@/features/users/api";
+import {
+  demoUsers,
+  type DemoUser,
+  type DemoUserRole,
+  type DemoUserStatus,
+} from "@/demo/fixtures/users";
 
-const { locale } = useI18n();
+const props = withDefaults(
+  defineProps<{
+    embedded?: boolean;
+  }>(),
+  {
+    embedded: false,
+  },
+);
+
+const { locale, t } = useI18n();
+
+type DisplayUser = Omit<DemoUser, "role" | "status"> & {
+  role: string;
+  status: string;
+};
+
+type MixedRow = DisplayUser & {
+  expandMode: "children" | "slot" | false;
+  logs?: {
+    time: string;
+    action: string;
+    by: string;
+  }[];
+  children?: DisplayUser[];
+};
 
 const tableLocale = computed(() => (locale.value === "en" ? "en" : "zhHans"));
-
 const pageNum = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
@@ -20,10 +49,10 @@ const selectedIds = ref<string[]>([]);
 const showColumnToggle = ref(true);
 const showPagination = ref(true);
 const loading = ref(false);
+const activeFilters = ref<ActiveFilterItem[]>([]);
+const pageData = ref<DemoUser[]>([]);
 
-const activeFilters = ref<{ key: string; label: string; value: any; displayValue: string }[]>([]);
-
-const columns = reactive<Column[]>([
+const columns = ref<Column[]>([
   {
     label: "ID",
     value: "id",
@@ -32,26 +61,26 @@ const columns = reactive<Column[]>([
     width: "80px",
   },
   {
-    label: "姓名",
+    label: "",
     value: "name",
     show: true,
     originalIndex: 1,
   },
   {
-    label: "邮箱",
+    label: "",
     value: "email",
     show: true,
     originalIndex: 2,
   },
   {
-    label: "角色",
+    label: "",
     value: "role",
     show: true,
     originalIndex: 3,
     width: "120px",
   },
   {
-    label: "状态",
+    label: "",
     value: "status",
     show: true,
     originalIndex: 4,
@@ -59,44 +88,58 @@ const columns = reactive<Column[]>([
     fixed: "right",
   },
   {
-    label: "最后登录",
+    label: "",
     value: "lastLogin",
     show: false,
     originalIndex: 5,
   },
 ]);
 
-type MixedRow = User & {
-  expandMode: "children" | "slot" | false;
-  logs?: { time: string; action: string; by: string }[];
-  children?: User[];
-};
+const roleLabels = computed<Record<DemoUserRole, string>>(() => ({
+  admin: t("demo.advancedTable.filters.roles.admin"),
+  editor: t("demo.advancedTable.filters.roles.editor"),
+  viewer: t("demo.advancedTable.filters.roles.viewer"),
+}));
+
+const statusLabels = computed<Record<DemoUserStatus, string>>(() => ({
+  enabled: t("demo.advancedTable.filters.statuses.enabled"),
+  disabled: t("demo.advancedTable.filters.statuses.disabled"),
+}));
+
+watchEffect(() => {
+  const labels: Record<string, string> = {
+    id: "ID",
+    name: t("demo.advancedTable.columns.name"),
+    email: t("demo.advancedTable.columns.email"),
+    role: t("demo.advancedTable.columns.role"),
+    status: t("demo.advancedTable.columns.status"),
+    lastLogin: t("demo.advancedTable.columns.lastLogin"),
+  };
+
+  columns.value.forEach((column) => {
+    if (labels[column.value]) {
+      column.label = labels[column.value]!;
+    }
+  });
+});
+
+const toDisplayUser = (user: DemoUser, childLabel?: string): DisplayUser => ({
+  ...user,
+  name: childLabel ? `${user.name} (${childLabel})` : user.name,
+  role: roleLabels.value[user.role],
+  status: statusLabels.value[user.status],
+});
 
 const mixedRows = computed<MixedRow[]>(() =>
-  mockData.value.map((row, index) => {
+  pageData.value.map((user, index) => {
+    const row = toDisplayUser(user);
     const mode =
       index % 3 === 0 ? "children" : index % 3 === 1 ? "slot" : false;
     const children =
       mode === "children"
         ? [
-            {
-              ...row,
-              id: `${row.id}-A`,
-              name: `${row.name} (子行 A)`,
-              email: row.email,
-              role: row.role,
-              status: row.status,
-              lastLogin: row.lastLogin,
-            },
-            {
-              ...row,
-              id: `${row.id}-B`,
-              name: `${row.name} (子行 B)`,
-              email: row.email,
-              role: row.role,
-              status: row.status,
-              lastLogin: row.lastLogin,
-            },
+            toDisplayUser(user, t("demo.advancedTable.rows.childA")),
+            toDisplayUser(user, t("demo.advancedTable.rows.childB")),
           ]
         : [];
     const logs =
@@ -104,16 +147,17 @@ const mixedRows = computed<MixedRow[]>(() =>
         ? [
             {
               time: row.lastLogin,
-              action: "登录",
-              by: "系统",
+              action: t("demo.advancedTable.logs.login"),
+              by: t("demo.advancedTable.logs.system"),
             },
             {
               time: "2026-02-02 10:20",
-              action: "修改状态",
+              action: t("demo.advancedTable.logs.statusChange"),
               by: row.name,
             },
           ]
         : [];
+
     return { ...row, expandMode: mode, logs, children };
   }),
 );
@@ -121,77 +165,127 @@ const mixedRows = computed<MixedRow[]>(() =>
 const expandModeForRow = (row: MixedRow) =>
   row.expandMode ? row.expandMode : row.children?.length ? "children" : false;
 
-const filterOptions: FilterOption[] = [
-  { label: "姓名", value: "name", type: "text", placeholder: "请输入姓名" },
-  { label: "邮箱", value: "email", type: "text", placeholder: "请输入邮箱" },
+const filterOptions = computed<FilterOption[]>(() => [
   {
-    label: "角色",
+    label: t("demo.advancedTable.filters.name"),
+    value: "name",
+    type: "text",
+    placeholder: t("demo.advancedTable.filters.namePlaceholder"),
+  },
+  {
+    label: t("demo.advancedTable.filters.email"),
+    value: "email",
+    type: "text",
+    placeholder: t("demo.advancedTable.filters.emailPlaceholder"),
+  },
+  {
+    label: t("demo.advancedTable.filters.role"),
     value: "role",
     type: "select",
     options: [
-      { label: "全部", value: "all" },
-      { label: "管理员", value: "admin" },
-      { label: "编辑", value: "editor" },
-      { label: "查看", value: "viewer" },
+      { label: t("demo.advancedTable.filters.all"), value: "all" },
+      { label: t("demo.advancedTable.filters.roles.admin"), value: "admin" },
+      { label: t("demo.advancedTable.filters.roles.editor"), value: "editor" },
+      { label: t("demo.advancedTable.filters.roles.viewer"), value: "viewer" },
     ],
   },
   {
-    label: "状态",
+    label: t("demo.advancedTable.filters.status"),
     value: "status",
     type: "select",
     options: [
-      { label: "全部", value: "all" },
-      { label: "启用", value: "enabled" },
-      { label: "禁用", value: "disabled" },
+      { label: t("demo.advancedTable.filters.all"), value: "all" },
+      {
+        label: t("demo.advancedTable.filters.statuses.enabled"),
+        value: "enabled",
+      },
+      {
+        label: t("demo.advancedTable.filters.statuses.disabled"),
+        value: "disabled",
+      },
     ],
   },
-];
+]);
 
-const primaryActions: ToolbarAction[] = [
+const primaryActions = computed<ToolbarAction[]>(() => [
   {
     key: "add",
-    label: "新增",
+    label: t("demo.advancedTable.actions.add"),
     icon: Plus,
     variant: "default",
   },
-];
+]);
 
-const mockData = ref<User[]>([]);
+const filterUsers = (users: DemoUser[]) => {
+  return users.filter((user) =>
+    activeFilters.value.every((filter) => {
+      if (filter.value == null || filter.value === "" || filter.value === "all") {
+        return true;
+      }
+
+      switch (filter.key) {
+        case "name":
+          return user.name
+            .toLowerCase()
+            .includes(String(filter.value).toLowerCase());
+        case "email":
+          return user.email
+            .toLowerCase()
+            .includes(String(filter.value).toLowerCase());
+        case "role":
+          return user.role === String(filter.value);
+        case "status":
+          return user.status === String(filter.value);
+        default:
+          return true;
+      }
+    }),
+  );
+};
 
 const fetchUsers = async () => {
   loading.value = true;
   try {
-    const res = await GetUsersApi({
-      pageNum: pageNum.value,
-      pageSize: pageSize.value,
-    });
-    mockData.value = res.data.list;
-    total.value = res.data.total;
+    await new Promise((resolve) => window.setTimeout(resolve, 120));
+    const filteredUsers = filterUsers(demoUsers);
+    total.value = filteredUsers.length;
+
+    const maxPage = Math.max(
+      1,
+      Math.ceil(filteredUsers.length / pageSize.value),
+    );
+    if (pageNum.value > maxPage) {
+      pageNum.value = maxPage;
+    }
+
+    const start = (pageNum.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    pageData.value = filteredUsers.slice(start, end);
   } finally {
     loading.value = false;
   }
 };
 
-const secondaryActions: ToolbarAction[] = [
+const secondaryActions = computed<ToolbarAction[]>(() => [
   {
     key: "edit",
-    label: "编辑",
+    label: t("demo.advancedTable.actions.edit"),
     icon: Pencil,
     variant: "outline",
-    disabled: computed(() => selectedIds.value.length !== 1).value,
+    disabled: selectedIds.value.length !== 1,
   },
   {
     key: "delete",
-    label: "删除",
+    label: t("demo.advancedTable.actions.delete"),
     icon: Trash2,
     variant: "destructive",
-    disabled: computed(() => selectedIds.value.length === 0).value,
+    disabled: selectedIds.value.length === 0,
   },
   {
     key: "column-toggle",
-    label: computed(() =>
-      showColumnToggle.value ? "隐藏列设置" : "显示列设置",
-    ).value,
+    label: showColumnToggle.value
+      ? t("demo.advancedTable.actions.hideColumns")
+      : t("demo.advancedTable.actions.showColumns"),
     variant: "outline",
     onClick: () => {
       showColumnToggle.value = !showColumnToggle.value;
@@ -199,9 +293,9 @@ const secondaryActions: ToolbarAction[] = [
   },
   {
     key: "pagination-toggle",
-    label: computed(() =>
-      showPagination.value ? "隐藏分页" : "显示分页",
-    ).value,
+    label: showPagination.value
+      ? t("demo.advancedTable.actions.hidePagination")
+      : t("demo.advancedTable.actions.showPagination"),
     variant: "outline",
     onClick: () => {
       showPagination.value = !showPagination.value;
@@ -209,21 +303,24 @@ const secondaryActions: ToolbarAction[] = [
   },
   {
     key: "refresh",
-    label: "刷新",
+    label: t("demo.advancedTable.actions.refresh"),
     variant: "outline",
     onClick: fetchUsers,
   },
-];
+]);
 
 const handleSearch = () => {
+  pageNum.value = 1;
   fetchUsers();
 };
 
 const handleRemoveFilter = () => {
+  pageNum.value = 1;
   fetchUsers();
 };
 
 const handleClearAllFilters = () => {
+  pageNum.value = 1;
   fetchUsers();
 };
 
@@ -237,11 +334,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col flex-1 h-full space-y-2 overflow-hidden px-4 py-2">
+  <div
+    class="flex flex-col space-y-2 overflow-hidden"
+    :class="
+      props.embedded
+        ? 'h-[760px] max-h-[78vh] px-5 py-5'
+        : 'flex-1 h-[760px] max-h-[78vh] px-4 py-2'
+    "
+  >
     <div class="text-sm font-semibold text-muted-foreground">
-      混合模式（可切换分页）
+      {{ $t("demo.advancedTable.mode") }}
     </div>
-    <div class="flex-1 overflow-hidden rounded-md flex flex-col">
+    <div class="flex flex-1 flex-col overflow-hidden rounded-md">
       <AdvancedTable
         v-model:selected-ids="selectedIds"
         v-model:columns="columns"
@@ -262,14 +366,14 @@ onMounted(() => {
         :show-expand="true"
         :show-pagination="showPagination"
         :locale="tableLocale"
-        class="flex-1 min-h-0 h-[520px]"
+        class="h-full min-h-0 flex-1"
         @search="handleSearch"
         @filter-remove="handleRemoveFilter"
         @filter-clear-all="handleClearAllFilters"
       >
         <template #expanded="{ row }">
           <div class="p-3 text-sm text-muted-foreground">
-            <div class="mb-2 font-medium">操作记录</div>
+            <div class="mb-2 font-medium">{{ $t("demo.advancedTable.logs.title") }}</div>
             <div class="space-y-1">
               <div
                 v-for="(log, index) in row.logs"

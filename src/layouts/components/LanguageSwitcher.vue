@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
-const languages = [
-  { value: "en", label: "English" },
-  { value: "zhHans", label: "中文" },
-] as const;
+const languages = computed(() => [
+  { value: "en", label: t("demo.languages.en") },
+  { value: "zhHans", label: t("demo.languages.zhHans") },
+] as const);
 
-const setLanguage = (lang: (typeof languages)[number]["value"]) => {
+const setLanguage = (lang: "en" | "zhHans") => {
   locale.value = lang;
   localStorage.setItem("user-locale", lang);
 };

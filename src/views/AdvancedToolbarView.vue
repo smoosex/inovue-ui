@@ -1,78 +1,78 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed } from "vue";
 import { Toolbar } from "@/components/toolbar";
-import { type ToolbarAction } from "@/components/toolbar";
-import { LucidePlus, LucideEdit, LucideTrash2, LucideDownload, LucideSettings } from "lucide-vue-next";
+import type { ToolbarAction } from "@/components/toolbar";
+import {
+  LucidePlus,
+  LucideEdit,
+  LucideTrash2,
+  LucideDownload,
+  LucideSettings,
+} from "lucide-vue-next";
 
-const handleAdd = () => {
-  console.log("Add clicked");
-};
+const props = withDefaults(
+  defineProps<{
+    embedded?: boolean;
+  }>(),
+  {
+    embedded: false,
+  },
+);
 
-const handleEdit = () => {
-  console.log("Edit clicked");
-};
+const { t } = useI18n();
 
-const handleDelete = () => {
-  console.log("Delete clicked");
-};
-
-const handleExport = () => {
-  console.log("Export clicked");
-};
-
-const handleSettings = () => {
-  console.log("Settings clicked");
-};
-
-const primaryActions = ref<ToolbarAction[]>([
+const primaryActions = computed<ToolbarAction[]>(() => [
   {
     key: "add",
-    label: "新增",
+    label: t("demo.advancedToolbar.actions.add"),
     icon: LucidePlus,
     variant: "default",
-    onClick: handleAdd,
+    onClick: () => {},
   },
   {
     key: "edit",
-    label: "编辑",
+    label: t("demo.advancedToolbar.actions.edit"),
     icon: LucideEdit,
     variant: "outline",
-    onClick: handleEdit,
+    onClick: () => {},
     show: true,
   },
   {
     key: "delete",
-    label: "删除",
+    label: t("demo.advancedToolbar.actions.delete"),
     icon: LucideTrash2,
     variant: "destructive",
-    onClick: handleDelete,
+    onClick: () => {},
     show: true,
   },
 ]);
 
-const secondaryActions = ref<ToolbarAction[]>([
+const secondaryActions = computed<ToolbarAction[]>(() => [
   {
     key: "export",
-    label: "导出",
+    label: t("demo.advancedToolbar.actions.export"),
     icon: LucideDownload,
     variant: "outline",
-    onClick: handleExport,
+    onClick: () => {},
     isIconOnly: false,
   },
   {
     key: "settings",
-    tooltip: "设置",
+    tooltip: t("demo.advancedToolbar.actions.settings"),
     icon: LucideSettings,
     variant: "ghost",
-    onClick: handleSettings,
+    onClick: () => {},
     isIconOnly: true,
   },
 ]);
 </script>
 
 <template>
-  <div class="h-screen flex flex-col p-4 pt-0">
-    <div class="flex items-center justify-between shrink-0">
+  <div
+    class="flex min-h-0 flex-col"
+    :class="props.embedded ? 'p-5' : 'h-full p-4'"
+  >
+    <div v-if="!props.embedded" class="flex items-center justify-between shrink-0">
       <h1 class="text-2xl font-bold">
         {{ $t("menu.components.navigation.advancedToolbar") }}
       </h1>
@@ -81,15 +81,7 @@ const secondaryActions = ref<ToolbarAction[]>([
     <Toolbar
       :primary-actions="primaryActions"
       :secondary-actions="secondaryActions"
-      class="mt-4"
+      :class="props.embedded ? '' : 'mt-4'"
     />
-
-    <div class="mt-8 p-4 border rounded-lg bg-muted/20">
-      <h3 class="text-lg font-semibold mb-2">使用示例</h3>
-      <p class="text-muted-foreground">
-        AdvancedToolbar 组件包含主操作区（左侧）和次要操作区（右侧）。<br>
-        支持配置按钮的图标、标签、变体、尺寸，以及 icon-only 模式。
-      </p>
-    </div>
   </div>
 </template>

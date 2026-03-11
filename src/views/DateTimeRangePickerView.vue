@@ -9,7 +9,15 @@ import type {
   DateTimeRange,
   DateRange,
 } from "@/components/date-time-range-picker";
-import { Button } from "@/components/ui/button";
+
+const props = withDefaults(
+  defineProps<{
+    embedded?: boolean;
+  }>(),
+  {
+    embedded: false,
+  },
+);
 
 const { locale } = useI18n();
 
@@ -18,75 +26,62 @@ const dateTimeRange = ref<DateTimeRange>({
   to: new Date(),
 });
 
-const dateTimeRangeEmpty = ref<DateTimeRange>({
-  from: undefined,
-  to: undefined,
-});
-
 const dateRange = ref<DateRange>({
   from: new Date(),
   to: new Date(),
 });
 
 const time = ref<Date>(new Date());
-
-const handleSearch = () => {
-  console.log("DateTimeRange:", dateTimeRange.value);
-  console.log("DateRange:", dateRange.value);
-  console.log("Time:", time.value);
-};
 </script>
 
 <template>
-  <div class="h-screen flex flex-col p-4 pt-0">
-    <div class="flex items-center justify-between shrink-0">
-      <h1 class="text-2xl font-bold">
+  <div
+    class="flex min-h-0 flex-col"
+    :class="props.embedded ? 'p-5' : 'h-full p-4'"
+  >
+    <div
+      class="flex items-center justify-between shrink-0"
+      :class="props.embedded ? 'mb-4' : ''"
+    >
+      <h1 v-if="!props.embedded" class="text-2xl font-bold">
         {{ $t("menu.components.input.dateTimeRangePicker") }}
       </h1>
-      <Button variant="outline" size="sm" @click="handleSearch"> 提交 </Button>
+      <div v-else />
     </div>
 
-  <div class="flex-1 overflow-auto space-y-8 mt-4">
-      <!-- Empty DateTimeRangePicker (i18n placeholder) -->
+    <div class="flex-1 space-y-8 overflow-auto" :class="props.embedded ? '' : 'mt-4'">
       <div class="space-y-2">
-        <h2 class="text-lg font-semibold">空值占位（验证 i18n）</h2>
-        <DateTimeRangePicker
-          v-model="dateTimeRangeEmpty"
-          :locale="locale === 'en' ? 'en' : 'zhHans'"
-        />
-      </div>
-
-      <!-- DateTimeRangePicker -->
-      <div class="space-y-2">
-        <h2 class="text-lg font-semibold">日期时间范围选择器（取消回滚）</h2>
+        <h2 class="text-lg font-semibold">{{ $t("demo.dateTimeRangePicker.dateTime") }}</h2>
         <DateTimeRangePicker
           v-model="dateTimeRange"
           :locale="locale === 'en' ? 'en' : 'zhHans'"
         />
       </div>
 
-      <!-- DateRangePicker -->
       <div class="space-y-2">
-        <h2 class="text-lg font-semibold">日期范围选择器</h2>
+        <h2 class="text-lg font-semibold">{{ $t("demo.dateTimeRangePicker.dateRange") }}</h2>
         <DateRangePicker
           v-model="dateRange"
           :locale="locale === 'en' ? 'en' : 'zhHans'"
         />
       </div>
 
-      <!-- TimeInput -->
       <div class="space-y-2">
-        <h2 class="text-lg font-semibold">时间输入</h2>
-        <TimeInput v-model="time" />
+        <h2 class="text-lg font-semibold">{{ $t("demo.dateTimeRangePicker.time") }}</h2>
+        <TimeInput v-model="time" :locale="locale === 'en' ? 'en' : 'zhHans'" />
       </div>
 
-      <!-- 选中值展示 -->
-      <div class="p-4 border rounded-lg bg-muted/20 space-y-2">
-        <h3 class="font-semibold">当前选中值：</h3>
-        <p class="text-sm">空值占位: {{ dateTimeRangeEmpty }}</p>
-        <p class="text-sm">日期时间范围: {{ dateTimeRange }}</p>
-        <p class="text-sm">日期范围: {{ dateRange }}</p>
-        <p class="text-sm">时间: {{ time }}</p>
+      <div class="space-y-2 rounded-lg border bg-muted/20 p-4">
+        <h3 class="font-semibold">{{ $t("demo.dateTimeRangePicker.currentValues") }}</h3>
+        <p class="text-sm">
+          {{ $t("demo.dateTimeRangePicker.labels.dateTime") }}: {{ dateTimeRange }}
+        </p>
+        <p class="text-sm">
+          {{ $t("demo.dateTimeRangePicker.labels.dateRange") }}: {{ dateRange }}
+        </p>
+        <p class="text-sm">
+          {{ $t("demo.dateTimeRangePicker.labels.time") }}: {{ time }}
+        </p>
       </div>
     </div>
   </div>

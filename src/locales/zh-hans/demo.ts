@@ -1,0 +1,138 @@
+export default {
+  languages: {
+    en: "英文",
+    zhHans: "中文",
+  },
+  hero: {
+    badge: "基于 shadcn-vue",
+    title: "基于shadcn-vue 开发的几个实用组件",
+    description: "",
+    installTitle: "安装命令",
+    installDescription: "",
+    diagramTitle: "基于shadcn-vue的表格套件",
+    nodeInput: "输入基础",
+    nodeDependsOn: "依赖范围",
+    nodePrimary: "主容器",
+    nodeAction: "并列操作",
+  },
+  sections: {
+    label: "组件演示",
+    advancedTable:
+      "包含选择、筛选、分页、列设置和展开行能力的数据表格。",
+    smartSearchInput:
+      "支持多种筛选类型、异步选项和已选标签展示的搜索输入组件。",
+    dateTimeRangePicker:
+      "支持预设、日历本地化和内联值展示的日期时间选择组件。",
+    advancedToolbar:
+      "适用于管理界面的主次操作工具栏组件。",
+  },
+  advancedTable: {
+    mode: "混合模式（可切换分页）",
+    columns: {
+      name: "姓名",
+      email: "邮箱",
+      role: "角色",
+      status: "状态",
+      lastLogin: "最后登录",
+    },
+    filters: {
+      name: "姓名",
+      namePlaceholder: "请输入姓名",
+      email: "邮箱",
+      emailPlaceholder: "请输入邮箱",
+      role: "角色",
+      status: "状态",
+      all: "全部",
+      roles: {
+        admin: "管理员",
+        editor: "编辑",
+        viewer: "查看",
+      },
+      statuses: {
+        enabled: "启用",
+        disabled: "禁用",
+      },
+    },
+    actions: {
+      add: "新增",
+      edit: "编辑",
+      delete: "删除",
+      showColumns: "显示列设置",
+      hideColumns: "隐藏列设置",
+      showPagination: "显示分页",
+      hidePagination: "隐藏分页",
+      refresh: "刷新",
+    },
+    rows: {
+      childA: "子行 A",
+      childB: "子行 B",
+    },
+    logs: {
+      title: "操作记录",
+      login: "登录",
+      statusChange: "修改状态",
+      system: "系统",
+    },
+  },
+  smartSearchInput: {
+    filters: {
+      name: "姓名",
+      namePlaceholder: "请输入姓名",
+      users: "用户（分页）",
+      status: "状态",
+      priority: "优先级（含 0）",
+      roles: "角色",
+      departments: "部门",
+      createdAt: "创建日期",
+      all: "全部",
+      statuses: {
+        enabled: "启用",
+        disabled: "禁用",
+      },
+      priorities: {
+        low: "0 - 低",
+        medium: "1 - 中",
+        high: "2 - 高",
+      },
+      roleOptions: {
+        admin: "管理员",
+        editor: "编辑",
+        viewer: "查看",
+      },
+      departmentOptions: {
+        tech: "技术部",
+        frontend: "前端组",
+        backend: "后端组",
+        product: "产品部",
+        pd: "产品设计",
+        ui: "UI设计",
+      },
+    },
+    activeFilters: "当前筛选条件：",
+    userLabel: "用户 {index}",
+  },
+  dateTimeRangePicker: {
+    submit: "提交",
+    dateTime: "日期时间范围选择器（取消回滚）",
+    dateRange: "日期范围选择器",
+    time: "时间输入",
+    currentValues: "当前选中值：",
+    labels: {
+      dateTime: "日期时间范围",
+      dateRange: "日期范围",
+      time: "时间",
+    },
+  },
+  advancedToolbar: {
+    actions: {
+      add: "新增",
+      edit: "编辑",
+      delete: "删除",
+      export: "导出",
+      settings: "设置",
+    },
+    sampleTitle: "使用示例",
+    sampleDescription:
+      "Toolbar 组件包含左侧主操作区和右侧次要操作区，支持按钮图标、标签、变体、尺寸和 icon-only 模式。",
+  },
+};
