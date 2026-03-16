@@ -102,7 +102,6 @@ const getDefaultValue = (type?: FilterInputType): AnyFilterValue => {
   return factory ? factory() : "";
 };
 
-// Initialize with correct type based on first option
 const currentValue = ref<AnyFilterValue>(
   getDefaultValue(props.options[0]?.type),
 );
@@ -221,6 +220,10 @@ const currentInputClass = computed(() =>
   ),
 );
 
+const resetCurrentValue = () => {
+  currentValue.value = getDefaultValue(currentOption.value?.type);
+};
+
 const removeActiveFilter = (key: string) => {
   activeFilters.value = activeFilters.value.filter((filter) => filter.key !== key);
 };
@@ -263,7 +266,7 @@ const handleClearCurrentValue = () => {
   const hadActiveFilter = activeFilters.value.some(
     (filter) => filter.key === selectedKey.value,
   );
-  currentValue.value = getDefaultValue(currentOption.value?.type);
+  resetCurrentValue();
   removeActiveFilter(selectedKey.value);
 
   if (hadActiveFilter) {
@@ -274,6 +277,16 @@ const handleClearCurrentValue = () => {
     emit("search", { key: selectedKey.value, value: formattedValue });
   }
 };
+
+const clearValueByKey = (key: string) => {
+  if (key !== selectedKey.value) return;
+  resetCurrentValue();
+};
+
+defineExpose({
+  clearCurrentValue: resetCurrentValue,
+  clearValueByKey,
+});
 </script>
 
 <template>

@@ -225,6 +225,11 @@ const rowExpandMode = (row: Row) => row.expandMode;
 - `filter-clear-all` 清空筛选
 - `row-expand-change` 行展开切换，参数 `{ row, expanded, key }`
 
+当启用 `showSmartSearch` 和 `showActiveFilters` 时：
+
+- 删除当前激活字段对应的筛选 tag 后，会同步清空搜索输入框中的当前值
+- 点击“清空”移除全部筛选后，也会同步清空当前搜索输入框中的当前值
+
 ## Slots
 
 - `cell` 自定义单元格内容，参数 `{ row, column, text }`

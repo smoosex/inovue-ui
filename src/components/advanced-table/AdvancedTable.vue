@@ -291,6 +291,10 @@ const firstRightFixedColumn = computed(() =>
 );
 
 const tooltipDisabled = ref<Record<string, boolean>>({});
+const smartSearchRef = ref<{
+  clearCurrentValue: () => void;
+  clearValueByKey: (key: string) => void;
+} | null>(null);
 
 const checkOverflow = (event: MouseEvent, key: string) => {
   const target = event.currentTarget as HTMLElement;
@@ -300,6 +304,16 @@ const checkOverflow = (event: MouseEvent, key: string) => {
 const getCellClass = (col: Column) => {
   const ellipsis = col.ellipsis ?? true;
   return ellipsis ? "truncate max-w-full" : "";
+};
+
+const handleFilterRemove = (key: string) => {
+  smartSearchRef.value?.clearValueByKey(key);
+  emit("filter-remove", key);
+};
+
+const handleFilterClearAll = () => {
+  smartSearchRef.value?.clearCurrentValue();
+  emit("filter-clear-all");
 };
 </script>
 
@@ -313,6 +327,7 @@ const getCellClass = (col: Column) => {
       >
         <SmartSearchInput
           v-if="showSmartSearch && filterOptions"
+          ref="smartSearchRef"
           v-model:active-filters="activeFilters"
           :options="filterOptions"
           :locale="props.locale"
@@ -323,8 +338,8 @@ const getCellClass = (col: Column) => {
         v-if="showActiveFilters"
         v-model:filters="activeFilters"
         :locale="props.locale"
-        @remove="(key) => emit('filter-remove', key)"
-        @clear-all="emit('filter-clear-all')"
+        @remove="handleFilterRemove"
+        @clear-all="handleFilterClearAll"
       />
     </div>
 
