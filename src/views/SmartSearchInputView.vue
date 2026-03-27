@@ -171,6 +171,16 @@ const filterOptions = computed<FilterOption[]>(() => [
     ],
   },
   {
+    label: t("demo.smartSearchInput.filters.date"),
+    value: "date",
+    type: "date",
+  },
+  {
+    label: t("demo.smartSearchInput.filters.dateRange"),
+    value: "dateRange",
+    type: "date-range",
+  },
+  {
     label: t("demo.smartSearchInput.filters.createdAt"),
     value: "createdAt",
     type: "date-time-range",

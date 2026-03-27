@@ -258,34 +258,36 @@ const handleUpdate = () => {
         variant="outline"
         :class="
           cn(
-            'w-full sm:w-fit max-w-full min-h-9 py-1 justify-start text-left font-normal',
-            props.class
+            'w-full min-w-0 max-w-full min-h-9 justify-start overflow-hidden px-3 py-1 text-left font-normal',
+            props.class,
           )
         "
       >
         <CalendarIcon class="mr-2 h-4 w-4 shrink-0 self-center" />
-        <template v-if="formatDateTime(range.from, currentLocale).hasDate">
-          <div class="flex flex-col leading-none gap-0.5 text-[11px]">
-            <span>{{ formatDateTime(range.from, currentLocale).date }}</span>
-            <span class="text-muted-foreground">{{
-              formatDateTime(range.from, currentLocale).time
-            }}</span>
-          </div>
-        </template>
-        <template v-else>
-          <span class="text-sm text-muted-foreground">{{
-            formatDateTime(range.from, currentLocale).date
-          }}</span>
-        </template>
-        <template v-if="range.to">
-          <ChevronRightIcon class="mx-2 h-4 w-4 shrink-0 self-center" />
-          <div class="flex flex-col leading-none gap-0.5 text-[11px]">
-            <span>{{ formatDateTime(range.to, currentLocale).date }}</span>
-            <span class="text-muted-foreground">{{
-              formatDateTime(range.to, currentLocale).time
-            }}</span>
-          </div>
-        </template>
+        <div class="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+          <template v-if="formatDateTime(range.from, currentLocale).hasDate">
+            <div class="flex min-w-0 flex-col gap-0.5 overflow-hidden text-[11px] leading-none">
+              <span class="truncate">{{ formatDateTime(range.from, currentLocale).date }}</span>
+              <span class="truncate text-muted-foreground">
+                {{ formatDateTime(range.from, currentLocale).time }}
+              </span>
+            </div>
+          </template>
+          <template v-else>
+            <span class="min-w-0 truncate text-sm text-muted-foreground">
+              {{ formatDateTime(range.from, currentLocale).date }}
+            </span>
+          </template>
+          <template v-if="range.to">
+            <ChevronRightIcon class="h-4 w-4 shrink-0 self-center" />
+            <div class="flex min-w-0 flex-col gap-0.5 overflow-hidden text-[11px] leading-none">
+              <span class="truncate">{{ formatDateTime(range.to, currentLocale).date }}</span>
+              <span class="truncate text-muted-foreground">
+                {{ formatDateTime(range.to, currentLocale).time }}
+              </span>
+            </div>
+          </template>
+        </div>
       </Button>
     </PopoverTrigger>
     <PopoverContent

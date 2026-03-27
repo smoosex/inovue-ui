@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import {
+  DatePicker,
   DateTimeRangePicker,
   DateRangePicker,
   TimeInput,
@@ -20,6 +21,8 @@ const props = withDefaults(
 );
 
 const { locale } = useI18n();
+
+const date = ref<Date | undefined>(new Date());
 
 const dateTimeRange = ref<DateTimeRange>({
   from: new Date(),
@@ -51,6 +54,14 @@ const time = ref<Date>(new Date());
 
     <div class="flex-1 space-y-8 overflow-auto" :class="props.embedded ? '' : 'mt-4'">
       <div class="space-y-2">
+        <h2 class="text-lg font-semibold">{{ $t("demo.dateTimeRangePicker.date") }}</h2>
+        <DatePicker
+          v-model="date"
+          :locale="locale === 'en' ? 'en' : 'zhHans'"
+        />
+      </div>
+
+      <div class="space-y-2">
         <h2 class="text-lg font-semibold">{{ $t("demo.dateTimeRangePicker.dateTime") }}</h2>
         <DateTimeRangePicker
           v-model="dateTimeRange"
@@ -73,6 +84,9 @@ const time = ref<Date>(new Date());
 
       <div class="space-y-2 rounded-lg border bg-muted/20 p-4">
         <h3 class="font-semibold">{{ $t("demo.dateTimeRangePicker.currentValues") }}</h3>
+        <p class="text-sm">
+          {{ $t("demo.dateTimeRangePicker.labels.date") }}: {{ date }}
+        </p>
         <p class="text-sm">
           {{ $t("demo.dateTimeRangePicker.labels.dateTime") }}: {{ dateTimeRange }}
         </p>

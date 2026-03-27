@@ -1,4 +1,7 @@
-import type { DateTimeRange } from "@/components/date-time-range-picker";
+import type {
+  DateRange,
+  DateTimeRange,
+} from "@/components/date-time-range-picker";
 
 export type SelectOption = {
   label: string;
@@ -13,6 +16,8 @@ export type FilterInputType =
   | "select"
   | "multi-select"
   | "tree-multi-select"
+  | "date"
+  | "date-range"
   | "date-time-range"
   | "cascade-select";
 
@@ -26,6 +31,8 @@ export type FilterInputValueMap = {
   select: string | number;
   "multi-select": (string | number)[];
   "tree-multi-select": (string | number)[];
+  date: Date | undefined;
+  "date-range": DateRange;
   "date-time-range": DateTimeRange;
   "cascade-select": CascadeValue;
 };

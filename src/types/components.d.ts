@@ -47,6 +47,7 @@ declare module 'vue' {
     CommandSeparator: typeof import('./../components/ui/command/CommandSeparator.vue')['default']
     CommandShortcut: typeof import('./../components/ui/command/CommandShortcut.vue')['default']
     DateInput: typeof import('./../components/date-time-range-picker/DateInput.vue')['default']
+    DatePicker: typeof import('./../components/date-time-range-picker/DatePicker.vue')['default']
     DateRangePicker: typeof import('./../components/date-time-range-picker/DateRangePicker.vue')['default']
     DateTimeInput: typeof import('./../components/date-time-range-picker/DateTimeInput.vue')['default']
     DateTimeRangePicker: typeof import('./../components/date-time-range-picker/DateTimeRangePicker.vue')['default']

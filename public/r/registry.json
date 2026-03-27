@@ -95,6 +95,10 @@
           "type": "registry:component"
         },
         {
+          "path": "src/components/date-time-range-picker/DatePicker.vue",
+          "type": "registry:component"
+        },
+        {
           "path": "src/components/date-time-range-picker/DateRangePicker.vue",
           "type": "registry:component"
         },

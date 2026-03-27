@@ -8,6 +8,7 @@ import type {
   FilterOption,
   ToolbarAction,
 } from "@/components/advanced-table";
+import type { DateRange } from "@/components/date-time-range-picker";
 import {
   demoUsers,
   type DemoUser,
@@ -131,6 +132,37 @@ const toDisplayUser = (user: DemoUser, childLabel?: string): DisplayUser => ({
   status: statusLabels.value[user.status],
 });
 
+const parseDateTime = (value: string) => {
+  const [datePart, timePart = "00:00"] = value.split(" ");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hours, minutes] = timePart.split(":").map(Number);
+
+  return new Date(
+    year || 0,
+    (month || 1) - 1,
+    day || 1,
+    hours || 0,
+    minutes || 0,
+  );
+};
+
+const isValidDate = (value: unknown): value is Date =>
+  value instanceof Date && !Number.isNaN(value.getTime());
+
+const getStartOfDayTime = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
+const getEndOfDayTime = (date: Date) =>
+  new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    23,
+    59,
+    59,
+    999,
+  ).getTime();
+
 const mixedRows = computed<MixedRow[]>(() =>
   pageData.value.map((user, index) => {
     const row = toDisplayUser(user);
@@ -180,6 +212,16 @@ const filterOptions = computed<FilterOption[]>(() => [
     placeholder: t("demo.advancedTable.filters.emailPlaceholder"),
   },
   {
+    label: t("demo.advancedTable.filters.loginDate"),
+    value: "lastLoginDate",
+    type: "date",
+  },
+  {
+    label: t("demo.advancedTable.filters.loginDateRange"),
+    value: "lastLoginDateRange",
+    type: "date-range",
+  },
+  {
     label: t("demo.advancedTable.filters.role"),
     value: "role",
     type: "select",
@@ -224,6 +266,8 @@ const filterUsers = (users: DemoUser[]) => {
         return true;
       }
 
+      const loginDate = parseDateTime(user.lastLogin);
+
       switch (filter.key) {
         case "name":
           return user.name
@@ -233,6 +277,22 @@ const filterUsers = (users: DemoUser[]) => {
           return user.email
             .toLowerCase()
             .includes(String(filter.value).toLowerCase());
+        case "lastLoginDate": {
+          if (!isValidDate(filter.value)) return true;
+          return getStartOfDayTime(loginDate) === getStartOfDayTime(filter.value);
+        }
+        case "lastLoginDateRange": {
+          const range = filter.value as DateRange;
+          if (!isValidDate(range?.from)) return true;
+
+          const fromTime = getStartOfDayTime(range.from);
+          const toTime = isValidDate(range.to)
+            ? getEndOfDayTime(range.to)
+            : getEndOfDayTime(range.from);
+          const currentTime = loginDate.getTime();
+
+          return currentTime >= fromTime && currentTime <= toTime;
+        }
         case "role":
           return user.role === String(filter.value);
         case "status":

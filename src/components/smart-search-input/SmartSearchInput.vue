@@ -17,7 +17,15 @@ import FilterMultiSelect from "./FilterMultiSelect.vue";
 import FilterTreeSelect from "./FilterTreeSelect.vue";
 import FilterCascadeSelect from "./FilterCascadeSelect.vue";
 import FilterClearButton from "./FilterClearButton.vue";
-import { DateTimeRangePicker } from "@/components/date-time-range-picker";
+import {
+  DatePicker,
+  DateRangePicker,
+  DateTimeRangePicker,
+} from "@/components/date-time-range-picker";
+import type {
+  DateRange,
+  DateTimeRange,
+} from "@/components/date-time-range-picker";
 
 const props = withDefaults(
   defineProps<{
@@ -42,6 +50,10 @@ const activeFilters = defineModel<ActiveFilterItem[]>("activeFilters", {
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
 
+const dateFormatterLocale = computed(() =>
+  props.locale === "zhHans" ? "zh-CN" : "en-US",
+);
+
 const selectedKey = ref(props.options[0]?.value || "");
 const currentOption = computed(() =>
   props.options.find((o) => o.value === selectedKey.value),
@@ -55,6 +67,10 @@ const resolveComponent = (type?: FilterInputType) => {
       return FilterMultiSelect;
     case "tree-multi-select":
       return FilterTreeSelect;
+    case "date":
+      return DatePicker;
+    case "date-range":
+      return DateRangePicker;
     case "date-time-range":
       return DateTimeRangePicker;
     case "cascade-select":
@@ -93,6 +109,8 @@ const defaultValueFactories: Record<FilterInputType, () => AnyFilterValue> = {
   select: () => "",
   "multi-select": () => [],
   "tree-multi-select": () => [],
+  date: () => undefined,
+  "date-range": () => ({ from: undefined, to: undefined }),
   "date-time-range": () => ({ from: undefined, to: undefined }),
   "cascade-select": () => ({ level1: undefined, level2: undefined }),
 };
@@ -158,6 +176,27 @@ const formatFilterValue = (
   value: AnyFilterValue,
   type?: FilterInputType,
 ): string => {
+  const formatDateValue = (
+    date: Date | undefined,
+    withTime = false,
+  ): string => {
+    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+      return "";
+    }
+
+    return new Intl.DateTimeFormat(dateFormatterLocale.value, {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      ...(withTime
+        ? {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        : {}),
+    }).format(date);
+  };
+
   switch (type) {
     case "multi-select":
     case "tree-multi-select": {
@@ -172,9 +211,19 @@ const formatFilterValue = (
       )?.label;
       return label || String(value ?? "");
     }
+    case "date":
+      return formatDateValue(value as Date | undefined);
+    case "date-range": {
+      const range = value as DateRange;
+      const from = formatDateValue(range?.from);
+      const to = formatDateValue(range?.to);
+      return [from, to].filter(Boolean).join(" - ");
+    }
     case "date-time-range": {
-      const range = value as { from?: string; to?: string };
-      return `${range.from || ""} - ${range.to || ""}`;
+      const range = value as DateTimeRange;
+      const from = formatDateValue(range?.from, true);
+      const to = formatDateValue(range?.to, true);
+      return [from, to].filter(Boolean).join(" - ");
     }
     case "cascade-select": {
       const casc = value as { level1?: string; level2?: string };
@@ -193,8 +242,14 @@ const isEmptyFilterValue = (
     case "multi-select":
     case "tree-multi-select":
       return !Array.isArray(value) || value.length === 0;
+    case "date":
+      return !(value instanceof Date) || Number.isNaN(value.getTime());
+    case "date-range": {
+      const range = value as DateRange;
+      return !(range?.from instanceof Date) || Number.isNaN(range.from.getTime());
+    }
     case "date-time-range": {
-      const range = value as { from?: Date; to?: Date };
+      const range = value as DateTimeRange;
       return !range?.from && !range?.to;
     }
     case "cascade-select": {
@@ -213,11 +268,18 @@ const hasCurrentValue = computed(
   () => !isEmptyFilterValue(currentValue.value, currentOption.value?.type),
 );
 
-const currentInputClass = computed(() =>
-  cn(
-    "w-full min-w-0 rounded-none border",
-    currentOption.value?.type === "date-time-range" && "sm:min-w-50",
+const isDateLikeFilter = computed(() =>
+  ["date", "date-range", "date-time-range"].includes(
+    currentOption.value?.type || "",
   ),
+);
+
+const currentInputClass = computed(() =>
+  cn("w-full min-w-0 rounded-none border", isDateLikeFilter.value && "pr-10"),
+);
+
+const currentInputWrapperClass = computed(() =>
+  cn("group relative min-w-0 max-w-full flex-1 lg:w-50 lg:flex-none"),
 );
 
 const resetCurrentValue = () => {
@@ -306,7 +368,7 @@ defineExpose({
       </SelectContent>
     </Select>
 
-    <div class="group relative min-w-0 flex-1 max-w-full lg:w-50 lg:flex-none">
+    <div :class="currentInputWrapperClass">
       <component
         :is="resolveComponent(currentOption?.type)"
         :model-value="currentValue as any"

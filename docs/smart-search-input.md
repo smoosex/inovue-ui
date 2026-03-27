@@ -15,6 +15,8 @@
   - [select - 单选下拉](#select---单选下拉)
   - [multi-select - 多选下拉](#multi-select---多选下拉)
   - [tree-multi-select - 树形多选](#tree-multi-select---树形多选)
+  - [date - 单日期](#date---单日期)
+  - [date-range - 日期范围](#date-range---日期范围)
   - [date-time-range - 日期时间范围](#date-time-range---日期时间范围)
   - [cascade-select - 级联选择](#cascade-select---级联选择)
 - [分页加载](#分页加载)
@@ -206,6 +208,8 @@ type FilterInputType =
   | "select"            // 单选下拉
   | "multi-select"      // 多选下拉
   | "tree-multi-select" // 树形多选
+  | "date"              // 单日期
+  | "date-range"        // 日期范围
   | "date-time-range"   // 日期时间范围
   | "cascade-select";   // 级联选择
 ```
@@ -434,11 +438,47 @@ const filterOptions: FilterOption[] = [
 
 ---
 
+### date - 单日期
+
+单日期选择器，适合精确到某一天的筛选。
+
+**值类型**: `Date | undefined`
+
+```ts
+const filterOptions: FilterOption[] = [
+  {
+    label: "登录日期",
+    value: "loginDate",
+    type: "date",
+  },
+];
+```
+
+---
+
+### date-range - 日期范围
+
+日期范围选择器，适合按起止日期过滤。
+
+**值类型**: `{ from?: Date; to?: Date }`
+
+```ts
+const filterOptions: FilterOption[] = [
+  {
+    label: "登录日期范围",
+    value: "loginDateRange",
+    type: "date-range",
+  },
+];
+```
+
+---
+
 ### date-time-range - 日期时间范围
 
 日期时间范围选择器。
 
-**值类型**: `{ from?: string; to?: string }`
+**值类型**: `{ from?: Date; to?: Date }`
 
 ```ts
 const filterOptions: FilterOption[] = [
@@ -759,6 +799,18 @@ const filterOptions = reactive<FilterOption[]>([
   },
 
   // 日期时间范围
+  {
+    label: "登录日期",
+    value: "loginDate",
+    type: "date",
+  },
+
+  {
+    label: "登录日期范围",
+    value: "loginDateRange",
+    type: "date-range",
+  },
+
   {
     label: "创建时间",
     value: "createdAt",

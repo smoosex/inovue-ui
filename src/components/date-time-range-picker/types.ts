@@ -1,17 +1,17 @@
-export interface DateRange {
-  from: Date;
-  to: Date | undefined;
-}
-
-export interface DateTimeRange {
+export type DateRange = {
   from: Date | undefined;
   to: Date | undefined;
-}
+};
 
-export interface Preset {
+export type DateTimeRange = {
+  from: Date | undefined;
+  to: Date | undefined;
+};
+
+export type Preset = {
   name: string;
   label: string;
-}
+};
 
 export const PRESETS: Preset[] = [
   { name: "today", label: "Today" },
@@ -25,14 +25,14 @@ export const PRESETS: Preset[] = [
   { name: "lastMonth", label: "Last Month" },
 ];
 
-export interface DateParts {
+export type DateParts = {
   day: number;
   month: number;
   year: number;
-}
+};
 
-export interface TimeParts {
+export type TimeParts = {
   hours: number;
   minutes: number;
   ampm: "AM" | "PM";
-}
+};

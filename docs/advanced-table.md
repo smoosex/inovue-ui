@@ -218,6 +218,8 @@ const rowExpandMode = (row: Row) => row.expandMode;
 
 工具栏在窄宽度下会自动换行，优先保留操作按钮可见性，高级筛选会换到下一行展开。
 
+`filterOptions` 可以直接使用 `date`、`date-range`、`date-time-range` 这些日期类筛选类型，适合表格场景里的单日期、日期范围和日期时间范围过滤。
+
 ## Events
 
 - `search` 触发筛选搜索，参数为 `FilterValue`

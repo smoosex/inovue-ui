@@ -40,6 +40,8 @@ export default {
       namePlaceholder: "Search name",
       email: "Email",
       emailPlaceholder: "Search email",
+      loginDate: "Login date",
+      loginDateRange: "Login date range",
       role: "Role",
       status: "Status",
       all: "All",
@@ -85,6 +87,8 @@ export default {
       priority: "Priority (includes 0)",
       roles: "Role",
       departments: "Department",
+      date: "Date",
+      dateRange: "Date range",
       createdAt: "Created at",
       all: "All",
       statuses: {
@@ -115,11 +119,13 @@ export default {
   },
   dateTimeRangePicker: {
     submit: "Submit",
+    date: "Single date picker",
     dateTime: "Date time range picker (cancel rollback)",
     dateRange: "Date range picker",
     time: "Time input",
     currentValues: "Current values:",
     labels: {
+      date: "Date",
       dateTime: "Date time range",
       dateRange: "Date range",
       time: "Time",

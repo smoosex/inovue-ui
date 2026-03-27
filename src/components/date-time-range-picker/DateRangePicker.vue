@@ -22,7 +22,7 @@ import {
   subMonths,
 } from "date-fns";
 import { enUS, zhCN, type Locale } from "date-fns/locale";
-import { CheckIcon, ChevronDownIcon } from "lucide-vue-next";
+import { CheckIcon, ChevronRightIcon } from "lucide-vue-next";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 import { toDate } from "reka-ui/date";
 import DateInput from "./DateInput.vue";
@@ -81,7 +81,7 @@ const formatDate = (date: Date | undefined, locale: Locale): string => {
 
 const isOpen = ref(false);
 const range = ref<DateRange>({
-  from: modelValue.value?.from || new Date(new Date().setHours(0, 0, 0, 0)),
+  from: modelValue.value?.from,
   to: modelValue.value?.to,
 });
 const openedRange = ref<DateRange>({ ...range.value });
@@ -89,7 +89,9 @@ const selectedPreset = ref<string | undefined>(undefined);
 
 const calendarRange = computed<RekaDateRange>({
   get: () => ({
-    start: dateToDateValue(range.value.from),
+    start: range.value.from
+      ? dateToDateValue(range.value.from)
+      : dateToDateValue(new Date()),
     end: range.value.to
       ? dateToDateValue(range.value.to)
       : undefined,
@@ -107,13 +109,11 @@ const calendarRange = computed<RekaDateRange>({
 watch(
   () => modelValue.value,
   (newVal) => {
-    if (newVal) {
-      range.value = {
-        from: newVal.from,
-        to: newVal.to,
-      };
-    }
-  }
+    range.value = {
+      from: newVal?.from,
+      to: newVal?.to,
+    };
+  },
 );
 
 const getPresetRange = (presetName: string): DateRange => {
@@ -181,6 +181,8 @@ const getPresetRange = (presetName: string): DateRange => {
 
 const setPreset = (preset: string) => {
   const newRange = getPresetRange(preset);
+  if (!newRange.from) return;
+
   range.value = newRange;
   selectedPreset.value = preset;
   calendarRange.value = {
@@ -192,8 +194,15 @@ const setPreset = (preset: string) => {
 };
 
 const checkPreset = () => {
+  if (!range.value.from) {
+    selectedPreset.value = undefined;
+    return;
+  }
+
   for (const preset of PRESETS) {
     const presetRange = getPresetRange(preset.name);
+    if (!presetRange.from) continue;
+
     if (
       isEqual(startOfDay(presetRange.from), startOfDay(range.value.from)) &&
       isEqual(
@@ -209,22 +218,17 @@ const checkPreset = () => {
 };
 
 const resetValues = () => {
-  const fromDate =
-    modelValue.value?.from || new Date(new Date().setHours(0, 0, 0, 0));
+  const fromDate = modelValue.value?.from;
   const toDate = modelValue.value?.to;
   range.value = { from: fromDate, to: toDate };
   selectedPreset.value = undefined;
-  calendarRange.value = {
-    start: dateToDateValue(fromDate),
-    end: toDate ? dateToDateValue(toDate) : undefined,
-  };
 };
 
 const areRangesEqual = (a?: DateRange, b?: DateRange): boolean => {
   if (!a || !b) return a === b;
   return (
-    a.from.getTime() === b.from.getTime() &&
-    (!a.to || !b.to || a.to.getTime() === b.to.getTime())
+    a.from?.getTime() === b.from?.getTime() &&
+    a.to?.getTime() === b.to?.getTime()
   );
 };
 
@@ -245,7 +249,8 @@ const handleFromDateChange = (date: Date | undefined) => {
 
 const handleToDateChange = (date: Date | undefined) => {
   if (!date) return;
-  const fromDate = date < range.value.from ? date : range.value.from;
+  const fromDate =
+    !range.value.from || date < range.value.from ? date : range.value.from;
   range.value = { ...range.value, from: fromDate, to: date };
 };
 
@@ -270,16 +275,22 @@ const handleUpdate = () => {
         variant="outline"
         :class="
           cn(
-            'w-full sm:w-fit max-w-full justify-start text-left text-[11px] font-normal text-wrap',
-            props.class
+            'w-full min-w-0 max-w-full justify-start overflow-hidden px-3 text-left font-normal',
+            props.class,
           )
         "
       >
-        {{ formatDate(range.from, currentLocale) }}
-        <template v-if="range.to">
-          <ChevronDownIcon class="mx-2 h-4 w-4" />
-          {{ formatDate(range.to, currentLocale) }}
-        </template>
+        <div class="flex min-w-0 flex-1 items-center gap-2 overflow-hidden text-sm">
+          <span class="min-w-0 truncate">
+            {{ formatDate(range.from, currentLocale) }}
+          </span>
+          <template v-if="range.to">
+            <ChevronRightIcon class="h-4 w-4 shrink-0" />
+            <span class="min-w-0 truncate">
+              {{ formatDate(range.to, currentLocale) }}
+            </span>
+          </template>
+        </div>
       </Button>
     </PopoverTrigger>
     <PopoverContent
@@ -315,7 +326,7 @@ const handleUpdate = () => {
                 :locale="props.locale"
                 @update:model-value="handleFromDateChange"
               />
-              <ChevronDownIcon class="mx-2 h-4 w-4" />
+              <ChevronRightIcon class="mx-2 h-4 w-4" />
               <DateInput
                 :model-value="range.to"
                 :locale="props.locale"

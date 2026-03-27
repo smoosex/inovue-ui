@@ -40,6 +40,8 @@ export default {
       namePlaceholder: "请输入姓名",
       email: "邮箱",
       emailPlaceholder: "请输入邮箱",
+      loginDate: "登录日期",
+      loginDateRange: "登录日期范围",
       role: "角色",
       status: "状态",
       all: "全部",
@@ -85,6 +87,8 @@ export default {
       priority: "优先级（含 0）",
       roles: "角色",
       departments: "部门",
+      date: "日期",
+      dateRange: "日期范围",
       createdAt: "创建日期",
       all: "全部",
       statuses: {
@@ -115,11 +119,13 @@ export default {
   },
   dateTimeRangePicker: {
     submit: "提交",
+    date: "单日期选择器",
     dateTime: "日期时间范围选择器（取消回滚）",
     dateRange: "日期范围选择器",
     time: "时间输入",
     currentValues: "当前选中值：",
     labels: {
+      date: "日期",
       dateTime: "日期时间范围",
       dateRange: "日期范围",
       time: "时间",
