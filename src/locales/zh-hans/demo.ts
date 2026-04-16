@@ -65,6 +65,8 @@ export default {
       hideColumns: "隐藏列设置",
       showPagination: "显示分页",
       hidePagination: "隐藏分页",
+      showEmptyState: "展示空数据",
+      hideEmptyState: "隐藏空数据",
       refresh: "刷新",
     },
     rows: {

@@ -236,6 +236,30 @@ const rowExpandMode = (row: Row) => row.expandMode;
 
 - `cell` 自定义单元格内容，参数 `{ row, column, text }`
 - `expanded` 自定义展开内容，参数 `{ row }`
+- `empty` 自定义空数据状态内容（无参数）
+
+### 空数据状态
+
+当 `data` 为空数组时，表格会显示空状态占位。默认使用内置的 `Empty` 组件（ShieldOff 图标 + i18n 文案），支持通过 `#empty` 插槽完全替换：
+
+```vue
+<AdvancedTable
+  v-model:columns="columns"
+  v-model:page-num="pageNum"
+  v-model:page-size="pageSize"
+  :data="[]"
+  :total="0"
+>
+  <template #empty>
+    <div class="flex flex-col items-center justify-center py-8 text-muted-foreground">
+      <span class="text-lg">🔍</span>
+      <p class="mt-2 text-sm">没有找到匹配的记录</p>
+    </div>
+  </template>
+</AdvancedTable>
+```
+
+不传 `#empty` 插槽时使用默认样式，内置文案跟随 `locale` 切换中英文。
 
 ## Column 类型（重要字段）
 

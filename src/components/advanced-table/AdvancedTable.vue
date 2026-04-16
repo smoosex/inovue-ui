@@ -5,7 +5,7 @@ import TablePagination from "./TablePagination.vue";
 import type { Column, Locale, RowKeyType } from "./types";
 import { GetI18nText } from "./locales";
 import { useResizeObserver, useMediaQuery } from "@vueuse/core";
-import { ChevronDown, ChevronRight } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, ShieldOff } from "lucide-vue-next";
 import {
   Tooltip,
   TooltipTrigger,
@@ -20,6 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { Toolbar } from "@/components/toolbar";
 import type { ToolbarAction } from "@/components/toolbar";
 import {
@@ -574,8 +581,25 @@ const handleFilterClearAll = () => {
             </template>
           <template v-else>
             <TableRow>
-              <TableCell :colspan="tableColspan" class="h-24 text-center">
-                {{ $t("noResults") }}
+              <TableCell :colspan="tableColspan" class="p-0">
+                <slot name="empty">
+                  <Empty class="h-full min-h-[168px] border-0 p-4 md:p-6">
+                    <EmptyHeader class="max-w-[240px]">
+                      <EmptyMedia
+                        variant="icon"
+                        class="bg-muted/70 text-muted-foreground"
+                      >
+                        <ShieldOff class="size-5" />
+                      </EmptyMedia>
+                      <EmptyTitle class="text-sm">
+                        {{ $t("emptyTitle") }}
+                      </EmptyTitle>
+                      <EmptyDescription class="text-xs">
+                        {{ $t("emptyDescription") }}
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
+                </slot>
               </TableCell>
             </TableRow>
           </template>

@@ -1,7 +1,6 @@
 {
   "$schema": "https://shadcn-vue.com/schema/registry-item.json",
   "name": "toolbar",
-  "type": "registry:component",
   "title": "Toolbar",
   "description": "A flexible toolbar component with primary and secondary action areas.",
   "dependencies": [],
@@ -27,5 +26,6 @@
       "content": "<script setup lang=\"ts\">\nimport type { ToolbarAction } from \"./types\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  Tooltip,\n  TooltipTrigger,\n  TooltipContent,\n} from \"@/components/ui/tooltip\";\n\ndefineProps<{\n  action: ToolbarAction;\n}>();\n</script>\n\n<template>\n  <template v-if=\"action.show !== false\">\n    <!-- Icon Only Button with Tooltip -->\n    <Tooltip v-if=\"action.isIconOnly\">\n      <TooltipTrigger as-child>\n        <Button\n          :variant=\"action.variant || 'outline'\"\n          :size=\"action.size || 'icon'\"\n          :disabled=\"action.disabled\"\n          @click=\"action.onClick\"\n        >\n          <component :is=\"action.icon\" class=\"h-4 w-4\" />\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent>\n        <p>{{ action.tooltip || action.label }}</p>\n      </TooltipContent>\n    </Tooltip>\n\n    <!-- Regular Button -->\n    <Button\n      v-else\n      :variant=\"action.variant || 'default'\"\n      :size=\"action.size || 'sm'\"\n      :disabled=\"action.disabled\"\n      @click=\"action.onClick\"\n    >\n      <component :is=\"action.icon\" v-if=\"action.icon\" class=\"h-4 w-4\" />\n      {{ action.label }}\n    </Button>\n  </template>\n</template>\n",
       "type": "registry:component"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

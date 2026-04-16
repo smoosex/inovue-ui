@@ -1,7 +1,6 @@
 {
   "$schema": "https://shadcn-vue.com/schema/registry-item.json",
   "name": "smart-search-input",
-  "type": "registry:component",
   "title": "Smart Search Input",
   "description": "An advanced search input component with filter tree, multi-select, and various input types.",
   "dependencies": [
@@ -78,5 +77,6 @@
       "content": "<script setup lang=\"ts\">\nimport { X } from \"lucide-vue-next\";\n\ndefineProps<{\n  visible: boolean;\n}>();\n\nconst emit = defineEmits<{\n  (e: \"click\", event: MouseEvent): void;\n}>();\n\nconst handleClick = (event: MouseEvent) => {\n  event.preventDefault();\n  event.stopPropagation();\n  emit(\"click\", event);\n};\n</script>\n\n<template>\n  <div\n    v-if=\"visible\"\n    class=\"pointer-events-none absolute inset-y-px right-px z-10 w-10 overflow-hidden rounded-r-[calc(var(--radius)-1px)] opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100\"\n  >\n    <div class=\"absolute inset-0 bg-gradient-to-r from-transparent via-background/35 to-background/75 backdrop-blur-md\" />\n    <button\n      type=\"button\"\n      class=\"pointer-events-auto absolute top-1/2 right-1.5 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-sm text-muted-foreground transition hover:bg-muted/70 hover:text-foreground\"\n      @click=\"handleClick\"\n    >\n      <X class=\"h-3.5 w-3.5\" />\n    </button>\n  </div>\n</template>\n",
       "type": "registry:component"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

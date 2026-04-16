@@ -1,7 +1,6 @@
 {
   "$schema": "https://shadcn-vue.com/schema/registry-item.json",
   "name": "date-time-range-picker",
-  "type": "registry:component",
   "title": "Date Time Range Picker",
   "description": "A component for selecting date and time ranges with presets support.",
   "dependencies": [
@@ -60,5 +59,6 @@
       "content": "export { default as DateInput } from \"./DateInput.vue\";\nexport { default as TimeInput } from \"./TimeInput.vue\";\nexport { default as DateTimeInput } from \"./DateTimeInput.vue\";\nexport { default as DatePicker } from \"./DatePicker.vue\";\nexport { default as DateRangePicker } from \"./DateRangePicker.vue\";\nexport { default as DateTimeRangePicker } from \"./DateTimeRangePicker.vue\";\n\nexport type {\n  DateRange,\n  DateTimeRange,\n  Preset,\n  DateParts,\n  TimeParts,\n} from \"./types\";\nexport { PRESETS } from \"./types\";\n",
       "type": "registry:component"
     }
-  ]
+  ],
+  "type": "registry:component"
 }

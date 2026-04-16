@@ -3,6 +3,8 @@ export type Locale = "en" | "zhHans";
 export const translations = {
   en: {
     noResults: "No results.",
+    emptyTitle: "No Data",
+    emptyDescription: "There is no data to display at the moment.",
     perPage: "/ page",
     total: "Total:",
     toggleColumns: "Toggle columns",
@@ -23,6 +25,8 @@ export const translations = {
   },
   zhHans: {
     noResults: "暂无数据",
+    emptyTitle: "暂无数据",
+    emptyDescription: "当前没有可显示的数据。",
     perPage: "条/页",
     total: "总计：",
     toggleColumns: "切换列",

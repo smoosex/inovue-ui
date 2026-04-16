@@ -50,6 +50,7 @@ const selectedIds = ref<string[]>([]);
 const selectionScope = ref<"cross-page" | "page">("cross-page");
 const showColumnToggle = ref(true);
 const showPagination = ref(true);
+const showEmptyState = ref(false);
 const loading = ref(false);
 const activeFilters = ref<ActiveFilterItem[]>([]);
 const pageData = ref<DemoUser[]>([]);
@@ -374,6 +375,16 @@ const secondaryActions = computed<ToolbarAction[]>(() => [
     },
   },
   {
+    key: "empty-state-toggle",
+    label: showEmptyState.value
+      ? t("demo.advancedTable.actions.hideEmptyState")
+      : t("demo.advancedTable.actions.showEmptyState"),
+    variant: "outline",
+    onClick: () => {
+      showEmptyState.value = !showEmptyState.value;
+    },
+  },
+  {
     key: "refresh",
     label: t("demo.advancedTable.actions.refresh"),
     variant: "outline",
@@ -424,8 +435,8 @@ onMounted(() => {
         v-model:page-num="pageNum"
         v-model:page-size="pageSize"
         v-model:active-filters="activeFilters"
-        :data="mixedRows"
-        :total="total"
+        :data="showEmptyState ? [] : mixedRows"
+        :total="showEmptyState ? 0 : total"
         :loading="loading"
         :show-column-toggle="showColumnToggle"
         :selection-scope="selectionScope"
