@@ -279,7 +279,9 @@ const currentInputClass = computed(() =>
 );
 
 const currentInputWrapperClass = computed(() =>
-  cn("group relative min-w-0 max-w-full flex-1 lg:w-50 lg:flex-none"),
+  cn(
+    "group relative min-w-0 w-full max-w-full",
+  ),
 );
 
 const resetCurrentValue = () => {
@@ -352,9 +354,13 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex w-full min-w-0 max-w-full items-center lg:inline-flex lg:w-auto">
+  <div
+    class="grid w-full min-w-0 max-w-full grid-cols-[9rem_minmax(0,1fr)_2.25rem] gap-0"
+  >
     <Select v-model="selectedKey">
-      <SelectTrigger class="w-32 shrink-0 rounded-r-none border-r-0 focus:ring-0 sm:w-40 xl:w-50">
+      <SelectTrigger
+        class="h-9 w-full min-w-0 rounded-r-none border-r-0 focus:ring-0"
+      >
         <SelectValue :placeholder="$t('selectColumn')" />
       </SelectTrigger>
       <SelectContent>
@@ -399,7 +405,7 @@ defineExpose({
     <Button
       size="icon"
       variant="outline"
-      class="shrink-0 rounded-l-none border-l-0 bg-transparent"
+      class="h-9 w-9 shrink-0 rounded-l-none border-l-0 bg-transparent"
       @click="handleSearch"
     >
       <Search class="h-4 w-4" />
