@@ -279,9 +279,7 @@ const currentInputClass = computed(() =>
 );
 
 const currentInputWrapperClass = computed(() =>
-  cn(
-    "group relative min-w-0 w-full max-w-full",
-  ),
+  cn("group relative min-w-0 w-full max-w-full"),
 );
 
 const resetCurrentValue = () => {
@@ -355,7 +353,7 @@ defineExpose({
 
 <template>
   <div
-    class="grid w-full min-w-0 max-w-full grid-cols-[9rem_minmax(0,1fr)_2.25rem] gap-0"
+    class="inline-grid w-[19.5rem] min-w-0 max-w-full grid-cols-[7.5rem_minmax(0,1fr)_2.25rem] gap-0"
   >
     <Select v-model="selectedKey">
       <SelectTrigger

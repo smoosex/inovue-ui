@@ -51,6 +51,7 @@ const selectionScope = ref<"cross-page" | "page">("cross-page");
 const showColumnToggle = ref(true);
 const showPagination = ref(true);
 const showEmptyState = ref(false);
+const showSecondaryActions = ref(true);
 const loading = ref(false);
 const activeFilters = ref<ActiveFilterItem[]>([]);
 const pageData = ref<DemoUser[]>([]);
@@ -258,6 +259,16 @@ const primaryActions = computed<ToolbarAction[]>(() => [
     icon: Plus,
     variant: "default",
   },
+  {
+    key: "secondary-actions-toggle",
+    label: showSecondaryActions.value
+      ? t("demo.advancedTable.actions.hideRightActions")
+      : t("demo.advancedTable.actions.showRightActions"),
+    variant: "outline",
+    onClick: () => {
+      showSecondaryActions.value = !showSecondaryActions.value;
+    },
+  },
 ]);
 
 const filterUsers = (users: DemoUser[]) => {
@@ -328,69 +339,75 @@ const fetchUsers = async () => {
   }
 };
 
-const secondaryActions = computed<ToolbarAction[]>(() => [
-  {
-    key: "edit",
-    label: t("demo.advancedTable.actions.edit"),
-    icon: Pencil,
-    variant: "outline",
-    disabled: selectedIds.value.length !== 1,
-  },
-  {
-    key: "delete",
-    label: t("demo.advancedTable.actions.delete"),
-    icon: Trash2,
-    variant: "destructive",
-    disabled: selectedIds.value.length === 0,
-  },
-  {
-    key: "selection-scope-toggle",
-    label: selectionScope.value === "cross-page"
-      ? t("demo.advancedTable.actions.disableCrossPageSelection")
-      : t("demo.advancedTable.actions.enableCrossPageSelection"),
-    variant: "outline",
-    onClick: () => {
-      selectionScope.value =
-        selectionScope.value === "cross-page" ? "page" : "cross-page";
+const secondaryActions = computed<ToolbarAction[]>(() => {
+  if (!showSecondaryActions.value) {
+    return [];
+  }
+
+  return [
+    {
+      key: "edit",
+      label: t("demo.advancedTable.actions.edit"),
+      icon: Pencil,
+      variant: "outline",
+      disabled: selectedIds.value.length !== 1,
     },
-  },
-  {
-    key: "column-toggle",
-    label: showColumnToggle.value
-      ? t("demo.advancedTable.actions.hideColumns")
-      : t("demo.advancedTable.actions.showColumns"),
-    variant: "outline",
-    onClick: () => {
-      showColumnToggle.value = !showColumnToggle.value;
+    {
+      key: "delete",
+      label: t("demo.advancedTable.actions.delete"),
+      icon: Trash2,
+      variant: "destructive",
+      disabled: selectedIds.value.length === 0,
     },
-  },
-  {
-    key: "pagination-toggle",
-    label: showPagination.value
-      ? t("demo.advancedTable.actions.hidePagination")
-      : t("demo.advancedTable.actions.showPagination"),
-    variant: "outline",
-    onClick: () => {
-      showPagination.value = !showPagination.value;
+    {
+      key: "selection-scope-toggle",
+      label: selectionScope.value === "cross-page"
+        ? t("demo.advancedTable.actions.disableCrossPageSelection")
+        : t("demo.advancedTable.actions.enableCrossPageSelection"),
+      variant: "outline",
+      onClick: () => {
+        selectionScope.value =
+          selectionScope.value === "cross-page" ? "page" : "cross-page";
+      },
     },
-  },
-  {
-    key: "empty-state-toggle",
-    label: showEmptyState.value
-      ? t("demo.advancedTable.actions.hideEmptyState")
-      : t("demo.advancedTable.actions.showEmptyState"),
-    variant: "outline",
-    onClick: () => {
-      showEmptyState.value = !showEmptyState.value;
+    {
+      key: "column-toggle",
+      label: showColumnToggle.value
+        ? t("demo.advancedTable.actions.hideColumns")
+        : t("demo.advancedTable.actions.showColumns"),
+      variant: "outline",
+      onClick: () => {
+        showColumnToggle.value = !showColumnToggle.value;
+      },
     },
-  },
-  {
-    key: "refresh",
-    label: t("demo.advancedTable.actions.refresh"),
-    variant: "outline",
-    onClick: fetchUsers,
-  },
-]);
+    {
+      key: "pagination-toggle",
+      label: showPagination.value
+        ? t("demo.advancedTable.actions.hidePagination")
+        : t("demo.advancedTable.actions.showPagination"),
+      variant: "outline",
+      onClick: () => {
+        showPagination.value = !showPagination.value;
+      },
+    },
+    {
+      key: "empty-state-toggle",
+      label: showEmptyState.value
+        ? t("demo.advancedTable.actions.hideEmptyState")
+        : t("demo.advancedTable.actions.showEmptyState"),
+      variant: "outline",
+      onClick: () => {
+        showEmptyState.value = !showEmptyState.value;
+      },
+    },
+    {
+      key: "refresh",
+      label: t("demo.advancedTable.actions.refresh"),
+      variant: "outline",
+      onClick: fetchUsers,
+    },
+  ];
+});
 
 const handleSearch = () => {
   pageNum.value = 1;

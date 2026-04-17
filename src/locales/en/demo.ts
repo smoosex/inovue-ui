@@ -65,6 +65,8 @@ export default {
       hideColumns: "Hide column settings",
       showPagination: "Show pagination",
       hidePagination: "Hide pagination",
+      showRightActions: "Show right actions",
+      hideRightActions: "Hide right actions",
       showEmptyState: "Show empty state",
       hideEmptyState: "Hide empty state",
       refresh: "Refresh",

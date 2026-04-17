@@ -9,8 +9,8 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 sm:gap-3 lg:flex-row lg:flex-nowrap lg:items-center">
-    <div v-if="primaryActions?.length" class="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-nowrap">
+  <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+    <div v-if="primaryActions?.length" class="flex min-w-0 flex-wrap items-center gap-2">
       <ToolbarItem
         v-for="action in primaryActions"
         :key="action.key"
@@ -19,14 +19,16 @@ defineProps<{
     </div>
 
     <div
-      class="order-2 flex w-full min-w-0 justify-stretch lg:order-none lg:min-w-fit lg:flex-1 lg:justify-end lg:pl-4 lg:pr-4"
+      v-if="$slots.default"
+      class="flex min-w-0 max-w-full items-center sm:ml-auto"
     >
       <slot />
     </div>
 
     <div
       v-if="secondaryActions?.length"
-      class="flex w-full min-w-0 flex-wrap items-center gap-2 lg:ml-auto lg:w-auto lg:flex-nowrap"
+      class="flex min-w-0 flex-wrap items-center gap-2"
+      :class="!$slots.default ? 'sm:ml-auto' : ''"
     >
       <ToolbarItem
         v-for="action in secondaryActions"
