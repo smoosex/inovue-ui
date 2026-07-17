@@ -28,14 +28,6 @@
   --chart-3: oklch(0.88 0.03 93);
   --chart-4: oklch(0.88 0.04 298);
   --chart-5: oklch(0.58 0.12 20);
-  --sidebar: oklch(1 0 0 / 0.52);
-  --sidebar-foreground: oklch(0.34 0.02 95);
-  --sidebar-primary: oklch(0.65 0.11 42);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.95 0.02 90 / 0.78);
-  --sidebar-accent-foreground: oklch(0.27 0.02 98);
-  --sidebar-border: oklch(0.9 0.01 95 / 0.8);
-  --sidebar-ring: oklch(0.65 0.11 42 / 0.9);
   --font-sans: "SF Pro Display", "Segoe UI", "PingFang SC", "Noto Sans SC", sans-serif;
   --font-mono: "SFMono-Regular", "JetBrains Mono", monospace;
   --font-serif: "Iowan Old Style", "Source Han Serif SC", serif;
@@ -77,14 +69,6 @@
   --chart-3: oklch(0.45 0.03 92);
   --chart-4: oklch(0.56 0.08 305);
   --chart-5: oklch(0.68 0.17 24);
-  --sidebar: oklch(0.28 0.01 100 / 0.6);
-  --sidebar-foreground: oklch(0.92 0.01 95);
-  --sidebar-primary: oklch(0.72 0.11 44);
-  --sidebar-primary-foreground: oklch(0.18 0.01 100);
-  --sidebar-accent: oklch(0.34 0.02 88 / 0.84);
-  --sidebar-accent-foreground: oklch(0.94 0.01 95);
-  --sidebar-border: oklch(0.42 0.01 100 / 0.8);
-  --sidebar-ring: oklch(0.72 0.11 44 / 0.92);
 }
 
 @theme inline {
@@ -112,14 +96,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
@@ -603,14 +579,6 @@ body::after {
 .dark .glass-hero::before,
 .dark .glass-card::before {
   background: linear-gradient(180deg, hsl(0 0% 100% / 0.06), transparent 30%, transparent 72%, hsl(0 0% 100% / 0.03));
-}
-
-.layout-frosted [data-sidebar="sidebar"] {
-  border-radius: var(--radius);
-  background: oklch(from var(--sidebar) l c h / 0.4);
-  backdrop-filter: blur(var(--frosted-blur-sm));
-  border: 1px solid oklch(1 0 0 / 0.2);
-  box-shadow: var(--shadow-sm);
 }
 
 .layout-frosted [data-slot="card"] {

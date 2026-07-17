@@ -64,7 +64,6 @@ const clearSelectedSearch = () => {
   selectedSearchQuery.value = "";
 };
 
-// Initialize local state when drawer opens
 watch(isOpen, (newVal) => {
   if (newVal) {
     localAvailableColumns.value = props.modelValue
@@ -73,7 +72,6 @@ watch(isOpen, (newVal) => {
     localSelectedColumns.value = props.modelValue.filter(
       (c) => c.show && !c.hideInSetting,
     );
-    // Reset search when drawer opens
     availableSearchQuery.value = "";
     selectedSearchQuery.value = "";
   }
@@ -133,7 +131,6 @@ const handleReset = () => {
   </Tooltip>
 
   <Sheet v-model:open="isOpen">
-    <!-- Removed DrawerTrigger, using manual State -->
     <SheetContent class="w-150 sm:max-w-150 flex flex-col gap-0 p-0">
       <SheetHeader class="p-6 pb-4">
         <SheetTitle>{{ $t("toggleColumns") }}</SheetTitle>
