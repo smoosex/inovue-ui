@@ -8,7 +8,7 @@ import {
   LucideTrash2,
   LucideDownload,
   LucideSettings,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 
 const props = withDefaults(
   defineProps<{

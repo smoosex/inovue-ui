@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { Search } from "lucide-vue-next";
+import { Search } from "@lucide/vue";
 import type {
   FilterOption,
   FilterValue,

@@ -41,7 +41,6 @@ declare module 'vue' {
     DialogScrollContent: typeof import('./../components/ui/dialog/DialogScrollContent.vue')['default']
     DialogTitle: typeof import('./../components/ui/dialog/DialogTitle.vue')['default']
     DialogTrigger: typeof import('./../components/ui/dialog/DialogTrigger.vue')['default']
-    DotGrid: typeof import('./../components/vue-bits/background/DotGrid.vue')['default']
     DropdownMenu: typeof import('./../components/ui/dropdown-menu/DropdownMenu.vue')['default']
     DropdownMenuCheckboxItem: typeof import('./../components/ui/dropdown-menu/DropdownMenuCheckboxItem.vue')['default']
     DropdownMenuContent: typeof import('./../components/ui/dropdown-menu/DropdownMenuContent.vue')['default']

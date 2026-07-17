@@ -7,7 +7,7 @@ import {
   X,
   Search,
   XCircle,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { VueDraggable } from "vue-draggable-plus";
 import type { Column, Locale } from "./types";
 import { GetI18nText } from "./locales";

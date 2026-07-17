@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs } from "vue";
-import { ChevronsUpDown } from "lucide-vue-next";
+import { ChevronsUpDown } from "@lucide/vue";
 import type { SelectOption } from "./types";
 import FilterTreeSelectOption from "./FilterTreeSelectOption.vue";
 import { Badge } from "@/components/ui/badge";

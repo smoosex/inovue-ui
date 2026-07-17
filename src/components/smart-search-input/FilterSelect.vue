@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, ref } from "vue";
 import { useIntersectionObserver, useVirtualList } from "@vueuse/core";
-import { Loader2 } from "lucide-vue-next";
+import { Loader2 } from "@lucide/vue";
 import type { SelectOption } from "./types";
 import {
   Select,

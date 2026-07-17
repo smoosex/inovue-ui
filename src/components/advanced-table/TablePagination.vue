@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-vue-next";
+import { ChevronLeftIcon, ChevronRightIcon } from "@lucide/vue";
 import { GetI18nText, type Locale } from "./locales";
 
 type Props = {

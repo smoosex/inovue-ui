@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { ChevronRight, ChevronDown } from "lucide-vue-next";
+import { ChevronRight, ChevronDown } from "@lucide/vue";
 import type { SelectOption } from "./types";
 import { Checkbox } from "@/components/ui/checkbox";
 

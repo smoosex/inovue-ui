@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { format, isEqual, isValid, startOfDay } from "date-fns";
 import { enUS, zhCN, type Locale } from "date-fns/locale";
-import { CalendarIcon } from "lucide-vue-next";
+import { CalendarIcon } from "@lucide/vue";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 import { toDate } from "reka-ui/date";
 import type { DateRange as RekaDateRange } from "reka-ui";

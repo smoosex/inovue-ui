@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X } from "lucide-vue-next";
+import { X } from "@lucide/vue";
 import type { ActiveFilterItem } from "./types";
 import { GetI18nText, type Locale } from "./locales";
 

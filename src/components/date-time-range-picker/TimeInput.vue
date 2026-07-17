@@ -3,7 +3,7 @@ import { ref, watch, useId } from "vue";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp } from "lucide-vue-next";
+import { ChevronDown, ChevronUp } from "@lucide/vue";
 import type { TimeParts } from "./types";
 import { GetI18nText, type Locale } from "./locales";
 

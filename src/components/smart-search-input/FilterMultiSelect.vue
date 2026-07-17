@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs } from "vue";
-import { Check, ChevronsUpDown, Loader2 } from "lucide-vue-next";
+import { Check, ChevronsUpDown, Loader2 } from "@lucide/vue";
 import type { SelectOption } from "./types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";

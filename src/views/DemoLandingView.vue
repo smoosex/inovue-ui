@@ -9,7 +9,7 @@ import {
   Table2,
   Terminal,
   Wrench,
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import { APP_NAME } from "@/config/constants";
 import { demoNavigation } from "@/demo/navigation";
 import { Button } from "@/components/ui/button";

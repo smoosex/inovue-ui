@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs } from "vue";
-import { ChevronRight, ChevronsUpDown } from "lucide-vue-next";
+import { ChevronRight, ChevronsUpDown } from "@lucide/vue";
 import type { CascadeValue, SelectOption } from "./types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";

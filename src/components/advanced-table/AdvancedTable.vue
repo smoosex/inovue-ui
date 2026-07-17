@@ -5,7 +5,7 @@ import TablePagination from "./TablePagination.vue";
 import type { Column, Locale, RowKeyType } from "./types";
 import { GetI18nText } from "./locales";
 import { useResizeObserver, useMediaQuery } from "@vueuse/core";
-import { ChevronDown, ChevronRight, ShieldOff } from "lucide-vue-next";
+import { ChevronDown, ChevronRight, ShieldOff } from "@lucide/vue";
 import {
   Tooltip,
   TooltipTrigger,

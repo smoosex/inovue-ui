@@ -22,7 +22,7 @@ import {
   subMonths,
 } from "date-fns";
 import { enUS, zhCN, type Locale } from "date-fns/locale";
-import { CalendarIcon, CheckIcon, ChevronRightIcon } from "lucide-vue-next";
+import { CalendarIcon, CheckIcon, ChevronRightIcon } from "@lucide/vue";
 import { CalendarDate, type DateValue } from "@internationalized/date";
 import { toDate } from "reka-ui/date";
 import DateTimeInput from "./DateTimeInput.vue";
