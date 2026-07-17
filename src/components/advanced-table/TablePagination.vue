@@ -1,5 +1,23 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { ChevronLeftIcon, ChevronRightIcon } from "@lucide/vue";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationFirst,
+  PaginationItem,
+  PaginationLast,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { GetI18nText, type Locale } from "./locales";
 
 type Props = {

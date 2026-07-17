@@ -12,6 +12,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -89,7 +90,9 @@ const emit = defineEmits<{
 const $t = (key: Parameters<typeof GetI18nText>[0]) =>
   GetI18nText(key, props.locale);
 
-const selectedIds = defineModel<RowKeyType[]>("selectedIds", { default: [] });
+const selectedIds = defineModel<RowKeyType[]>("selectedIds", {
+  default: () => [],
+});
 const columns = defineModel<Column[]>("columns", { required: true });
 const pageNum = defineModel<number>("pageNum", { required: true });
 const pageSize = defineModel<number>("pageSize", { required: true });

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
 import { Plus, Pencil, Trash2 } from "@lucide/vue";
 import { AdvancedTable } from "@/components/advanced-table";
 import type {

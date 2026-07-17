@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted } from "vue";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { APP_NAME } from "@/config/constants";
 import { demoNavigation } from "@/demo/navigation";
 import DarkModeSwitcher from "@/layouts/components/DarkModeSwitcher.vue";

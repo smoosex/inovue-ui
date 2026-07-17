@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, reactive } from "vue";
+import { useI18n } from "vue-i18n";
 import { SmartSearchInput, ActiveFilterTags } from "@/components/smart-search-input";
 import type { ActiveFilterItem, FilterOption } from "@/components/smart-search-input";
 

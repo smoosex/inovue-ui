@@ -9,6 +9,21 @@ import {
   XCircle,
 } from "@lucide/vue";
 import { VueDraggable } from "vue-draggable-plus";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Column, Locale } from "./types";
 import { GetI18nText } from "./locales";
 

@@ -1,4 +1,15 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+import { Check, Languages } from "@lucide/vue";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 const { locale, t } = useI18n();
 
 const languages = computed(() => [
@@ -16,7 +27,7 @@ const setLanguage = (lang: "en" | "zhHans") => {
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" size="icon">
-        <LucideLanguages class="h-5 w-5" />
+        <Languages class="h-5 w-5" />
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
@@ -27,7 +38,7 @@ const setLanguage = (lang: "en" | "zhHans") => {
         class="flex items-center justify-between gap-2"
       >
         <span>{{ lang.label }}</span>
-        <LucideCheck v-if="locale === lang.value" class="h-4 w-4" />
+        <Check v-if="locale === lang.value" class="h-4 w-4" />
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
